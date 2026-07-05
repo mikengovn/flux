@@ -1,0 +1,1960 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<title>Flux by Michael Ngo — Agentic Strategy OS for TransFi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================ TOKENS ============================ */
+:root{
+  --bg:#0A0C11; --bg-2:#0E1118; --panel:#12151D; --panel-2:#161A23; --elev:#1A1F2A;
+  --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.12); --line-strong:rgba(255,255,255,.18);
+  --brand:#2E6BFF; --brand-bright:#4C86FF; --brand-deep:#104ff4; --brand-ghost:rgba(46,107,255,.14);
+  --teal:#22D3EE; --green:#34D399; --violet:#A78BFA; --amber:#FBBF24; --rose:#FB7185;
+  --tx:#EAECEF; --tx-2:#A7AEBB; --tx-3:#6E7686; --tx-4:#4A515F;
+  --ok:#34D399; --warn:#FBBF24;
+  --r-lg:20px; --r-md:14px; --r-sm:10px; --r-xs:7px;
+  --sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --disp:'Space Grotesk','Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --shadow:0 24px 60px -18px rgba(0,0,0,.7),0 6px 18px -8px rgba(0,0,0,.55);
+  --shadow-sm:0 10px 26px -14px rgba(0,0,0,.65);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow:hidden}
+#root{height:100%}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+input{font-family:inherit}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(46,107,255,.35)}
+:focus-visible{outline:2px solid var(--brand-bright);outline-offset:2px;border-radius:6px}
+.mono{font-family:var(--mono)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:20px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.18);background-clip:padding-box}
+
+/* ============================ SPLASH ============================ */
+#splash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:9999;transition:opacity .5s ease}
+#splash.hide{opacity:0;pointer-events:none}
+.sp-mark{width:44px;height:44px;border-radius:12px;position:relative;background:radial-gradient(120% 120% at 30% 20%,#5b8dff,#2E6BFF 45%,#104ff4 100%);box-shadow:0 0 0 1px rgba(255,255,255,.12),0 12px 30px -8px rgba(46,107,255,.7)}
+.sp-mark::after{content:"";position:absolute;inset:0;border-radius:12px;background:conic-gradient(from 210deg,transparent,rgba(255,255,255,.55),transparent 40%);opacity:.5;animation:spin 1.4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.app{height:100%;position:relative;overflow:hidden}
+.dots{position:absolute;inset:0;background-image:radial-gradient(circle at center,rgba(255,255,255,.05) 1px,transparent 1px);background-size:26px 26px;pointer-events:none}
+.aura{position:absolute;pointer-events:none;filter:blur(60px);opacity:.5;border-radius:50%}
+
+/* ============================ LANDING ============================ */
+.landing{position:absolute;inset:0;display:flex;flex-direction:column;overflow:auto}
+.landing .aura-1{width:620px;height:620px;left:-160px;top:-220px;background:radial-gradient(circle,rgba(46,107,255,.5),transparent 60%)}
+.landing .aura-2{width:520px;height:520px;right:-140px;bottom:-160px;background:radial-gradient(circle,rgba(52,211,153,.28),transparent 60%)}
+.landing .aura-3{width:400px;height:400px;right:24%;top:8%;background:radial-gradient(circle,rgba(167,139,250,.22),transparent 62%)}
+.topnav{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:20px 28px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand .mk{width:30px;height:30px;border-radius:9px;position:relative;overflow:hidden;background:radial-gradient(120% 120% at 30% 20%,#5b8dff,#2E6BFF 45%,#104ff4 100%);box-shadow:0 0 0 1px rgba(255,255,255,.14),0 8px 20px -6px rgba(46,107,255,.6);flex:none}
+.brand .mk svg{position:absolute;inset:0;margin:auto;width:18px;height:18px}
+.brand .wm{display:flex;flex-direction:column;line-height:1}
+.brand .wm b{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.02em}
+.brand .wm span{font-size:10px;color:var(--tx-3);letter-spacing:.14em;text-transform:uppercase;margin-top:3px}
+.nav-r{display:flex;align-items:center;gap:10px}
+.pill-ghost{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--tx-2);padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.02)}
+.pill-ghost .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.hero{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 24px 60px;text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-bright);background:var(--brand-ghost);border:1px solid rgba(46,107,255,.28);padding:6px 12px;border-radius:999px;margin-bottom:22px}
+h1.head{font-family:var(--disp);font-weight:600;font-size:clamp(30px,5.4vw,58px);line-height:1.02;letter-spacing:-.03em;margin:0;max-width:900px}
+h1.head em{font-style:normal;background:linear-gradient(120deg,#7aa5ff,#2E6BFF 55%,#22D3EE);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--tx-2);font-size:clamp(15px,1.7vw,18px);max-width:640px;margin:20px auto 0;line-height:1.55}
+.search-wrap{width:min(720px,100%);margin:34px auto 0}
+.search{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,rgba(26,31,42,.9),rgba(18,21,29,.9));border:1px solid var(--line-2);border-radius:16px;padding:9px 9px 9px 18px;box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(8px);transition:border-color .2s,box-shadow .2s}
+.search:focus-within{border-color:rgba(46,107,255,.55);box-shadow:0 0 0 4px rgba(46,107,255,.14),var(--shadow)}
+.search .glyph{color:var(--tx-3);display:flex;flex:none}
+.search input{flex:1;background:none;border:none;outline:none;color:var(--tx);font-size:16px;min-width:0;padding:8px 2px}
+.search input::placeholder{color:var(--tx-4)}
+.go{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,var(--brand-bright),var(--brand));color:#fff;font-weight:600;font-size:14.5px;padding:12px 18px;border-radius:11px;white-space:nowrap;box-shadow:0 8px 22px -8px rgba(46,107,255,.8),inset 0 1px 0 rgba(255,255,255,.25);transition:transform .12s,filter .18s}
+.go:hover{filter:brightness(1.06)}
+.go:active{transform:translateY(1px)}
+.go:disabled{opacity:.55;cursor:default;filter:none}
+.hint{margin-top:12px;color:var(--tx-4);font-size:12.5px;font-family:var(--mono)}
+.examples{width:min(760px,100%);margin:26px auto 0;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.ex{display:flex;align-items:center;gap:10px;text-align:left;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:12px;padding:10px 13px;transition:border-color .18s,background .18s,transform .12s;max-width:240px}
+.ex:hover{border-color:var(--line-strong);background:rgba(255,255,255,.05);transform:translateY(-1px)}
+.ex .ic{width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;font-weight:700;font-size:13px;font-family:var(--disp)}
+.ex b{font-size:13px;font-weight:600;display:block;line-height:1.2}
+.ex span{font-size:11px;color:var(--tx-3);display:block;margin-top:2px}
+.kb{position:relative;z-index:2;margin:44px auto 0;width:min(820px,100%);border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(20,23,31,.6),rgba(14,17,24,.4));padding:16px 18px}
+.kb-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.kb-h .t{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--tx-2)}
+.kb-h .t b{color:var(--tx);font-weight:600}
+.kb-count{font-family:var(--mono);font-size:12px;color:var(--brand-bright);background:var(--brand-ghost);padding:4px 10px;border-radius:999px;border:1px solid rgba(46,107,255,.24)}
+.kb-grid{display:flex;flex-wrap:wrap;gap:8px}
+.kbpat{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tx-2);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:9px;padding:7px 10px}
+.kbpat i{width:7px;height:7px;border-radius:2px;flex:none}
+.foot{position:relative;z-index:2;padding:22px;text-align:center;color:var(--tx-4);font-size:11.5px}
+
+/* ============================ WORKSPACE ============================ */
+.ws{position:absolute;inset:0;display:flex;flex-direction:column;background:radial-gradient(140% 100% at 50% -10%,#0F1219,#0A0C11 60%)}
+.topbar{position:relative;z-index:6;display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(10,12,17,.75);backdrop-filter:blur(12px)}
+.tb-brand{display:flex;align-items:center;gap:9px;flex:none}
+.tb-brand .mk{width:26px;height:26px;border-radius:8px;position:relative;overflow:hidden;background:radial-gradient(120% 120% at 30% 20%,#5b8dff,#2E6BFF 45%,#104ff4 100%);box-shadow:0 0 0 1px rgba(255,255,255,.14);flex:none}
+.tb-brand .mk svg{position:absolute;inset:0;margin:auto;width:15px;height:15px}
+.tb-brand b{font-family:var(--disp);font-weight:700;font-size:15px;letter-spacing:-.02em}
+.divv{width:1px;height:22px;background:var(--line);flex:none}
+.client-chip{display:flex;align-items:center;gap:10px;min-width:0;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:11px;padding:6px 12px 6px 6px}
+.client-chip .av{width:26px;height:26px;border-radius:7px;flex:none;display:grid;place-items:center;font-weight:700;font-size:12px;font-family:var(--disp);color:#07121f}
+.client-chip .meta{min-width:0}
+.client-chip .meta b{font-size:13px;font-weight:600;display:block;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.client-chip .meta span{font-size:10.5px;color:var(--tx-3);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.progress-mini{display:flex;align-items:center;gap:10px;margin-left:auto}
+.pbar{width:150px;height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--teal));transition:width .5s ease;box-shadow:0 0 10px rgba(46,107,255,.6)}
+.pcount{font-family:var(--mono);font-size:12px;color:var(--tx-2);white-space:nowrap}
+.mode-pill{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--tx-3);border:1px solid var(--line);border-radius:999px;padding:5px 9px}
+.mode-pill .dot{width:6px;height:6px;border-radius:50%}
+.tb-btn{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--tx-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:rgba(255,255,255,.02);transition:border-color .15s,color .15s,background .15s}
+.tb-btn:hover{border-color:var(--line-strong);color:var(--tx);background:rgba(255,255,255,.05)}
+.tb-btn.primary{color:#fff;border-color:transparent;background:linear-gradient(180deg,var(--brand-bright),var(--brand))}
+.canvas{position:relative;flex:1;overflow:hidden;touch-action:none;cursor:grab;background-image:radial-gradient(circle at center,rgba(255,255,255,.045) 1px,transparent 1px);background-size:28px 28px}
+.canvas.grabbing{cursor:grabbing}
+.canvas .aura-c{position:absolute;width:900px;height:900px;left:50%;top:-10%;transform:translateX(-50%);background:radial-gradient(circle,rgba(46,107,255,.12),transparent 60%);filter:blur(40px);pointer-events:none}
+.world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.node{position:absolute;transform:translate(-50%,-50%);width:300px}
+.node.dragging{z-index:20}
+.card{position:relative;border-radius:var(--r-md);background:linear-gradient(180deg,rgba(24,29,39,.96),rgba(16,20,28,.96));border:1px solid var(--line-2);box-shadow:var(--shadow-sm);overflow:hidden;transition:border-color .2s,box-shadow .2s,transform .15s}
+.card:hover{border-color:var(--line-strong)}
+.card.sel{border-color:color-mix(in srgb,var(--ac) 70%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--ac) 50%,transparent),0 22px 50px -18px rgba(0,0,0,.7)}
+.card .topline{height:3px;background:linear-gradient(90deg,transparent,var(--ac),transparent);opacity:.9}
+.card-h{display:flex;align-items:center;gap:11px;padding:13px 14px 11px}
+.ag-ic{width:34px;height:34px;border-radius:9px;flex:none;display:grid;place-items:center;position:relative;background:color-mix(in srgb,var(--ac) 15%,transparent);border:1px solid color-mix(in srgb,var(--ac) 35%,transparent);color:var(--ac)}
+.ag-ic svg{width:18px;height:18px}
+.ag-tt{flex:1;min-width:0}
+.ag-tt b{font-size:14px;font-weight:600;display:block;line-height:1.15;font-family:var(--disp);letter-spacing:-.01em}
+.ag-tt span{font-size:11px;color:var(--tx-3);display:block;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:4px 8px;border-radius:999px;flex:none}
+.status.queued{color:var(--tx-3);background:rgba(255,255,255,.05)}
+.status.run{color:var(--ac);background:color-mix(in srgb,var(--ac) 15%,transparent)}
+.status.done{color:var(--ok);background:rgba(52,211,153,.14)}
+.status.err{color:var(--rose);background:rgba(251,113,133,.14)}
+.status .sp{width:9px;height:9px;border-radius:50%;border:1.6px solid currentColor;border-top-color:transparent;animation:spin .7s linear infinite}
+.status .dt{width:6px;height:6px;border-radius:50%;background:currentColor}
+.card-b{padding:2px 14px 14px}
+.log{border-top:1px solid var(--line);margin-top:2px;padding-top:10px;display:flex;flex-direction:column;gap:6px}
+.log-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--tx-2);line-height:1.35;opacity:0;transform:translateY(4px);animation:logIn .35s ease forwards}
+@keyframes logIn{to{opacity:1;transform:none}}
+.log-row .lk{color:var(--ac);flex:none;margin-top:1px;font-family:var(--mono);font-size:10px}
+.log-row.muted{color:var(--tx-4)}
+.res{margin-top:10px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);padding:11px 12px;animation:logIn .4s ease}
+.res .rl{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx-4);margin-bottom:6px}
+.res .rv{font-size:13px;color:var(--tx);line-height:1.4}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 8px;border-radius:7px;background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac);border:1px solid color-mix(in srgb,var(--ac) 26%,transparent)}
+.viewbtn{margin-top:11px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--tx);border:1px solid var(--line-2);border-radius:9px;padding:9px;background:rgba(255,255,255,.03);transition:border-color .15s,background .15s}
+.viewbtn:hover{border-color:color-mix(in srgb,var(--ac) 55%,transparent);background:color-mix(in srgb,var(--ac) 10%,transparent)}
+.strip{display:flex;align-items:center;gap:2px;flex-wrap:wrap;margin-top:4px}
+.strip .chip{font-size:10.5px;font-weight:600;padding:5px 8px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid var(--line);white-space:nowrap}
+.strip .chip.tf{background:color-mix(in srgb,var(--brand) 20%,transparent);border-color:color-mix(in srgb,var(--brand) 40%,transparent);color:var(--brand-bright)}
+.strip .arw{color:var(--tx-4);flex:none;display:flex}
+.orch{width:330px}
+.orch .card{background:linear-gradient(180deg,rgba(22,31,52,.97),rgba(14,19,30,.97));border-color:rgba(46,107,255,.35)}
+.orch .halo{position:absolute;inset:-2px;border-radius:16px;background:radial-gradient(120% 120% at 50% 0,rgba(46,107,255,.5),transparent 60%);filter:blur(14px);opacity:.6;z-index:-1;pointer-events:none}
+.plan{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.plan-row{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--tx-2);padding:7px 9px;border-radius:8px;background:rgba(255,255,255,.025);border:1px solid var(--line)}
+.plan-row .n{width:18px;height:18px;border-radius:6px;flex:none;display:grid;place-items:center;font-family:var(--mono);font-size:10px;font-weight:600;color:#07121f}
+.plan-row.pending{opacity:.5}
+.plan-row .st{margin-left:auto;font-family:var(--mono);font-size:9.5px;text-transform:uppercase;color:var(--tx-3)}
+.deliv{width:340px}
+.deliv .card{background:linear-gradient(180deg,rgba(20,32,26,.97),rgba(13,20,17,.97));border-color:rgba(52,211,153,.32)}
+.deliv.locked .card{opacity:.62;filter:saturate(.6)}
+.big-cta{margin-top:12px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:700;font-size:14px;color:#04140d;padding:13px;border-radius:11px;background:linear-gradient(180deg,#5fe6b4,var(--green));box-shadow:0 10px 24px -10px rgba(52,211,153,.7);transition:transform .12s,filter .16s;font-family:var(--disp)}
+.big-cta:hover{filter:brightness(1.05)}
+.big-cta:active{transform:translateY(1px)}
+.big-cta:disabled{opacity:.5;cursor:default;box-shadow:none;filter:grayscale(.4)}
+.ctrls{position:absolute;left:16px;bottom:16px;z-index:6;display:flex;flex-direction:column;gap:8px}
+.ctrls .grp{display:flex;flex-direction:column;background:rgba(16,20,28,.9);border:1px solid var(--line);border-radius:12px;overflow:hidden;backdrop-filter:blur(10px)}
+.cbtn{width:38px;height:38px;display:grid;place-items:center;color:var(--tx-2);transition:background .15s,color .15s}
+.cbtn:hover{background:rgba(255,255,255,.06);color:var(--tx)}
+.cbtn+.cbtn{border-top:1px solid var(--line)}
+.zlabel{font-family:var(--mono);font-size:10px;color:var(--tx-3);text-align:center;padding:4px 0;border-top:1px solid var(--line)}
+.legend{position:absolute;right:16px;bottom:16px;z-index:5;display:flex;gap:12px;background:rgba(16,20,28,.82);border:1px solid var(--line);border-radius:11px;padding:9px 13px;backdrop-filter:blur(10px);font-size:11px;color:var(--tx-3)}
+.legend .li{display:flex;align-items:center;gap:6px}
+.legend .li i{width:8px;height:8px;border-radius:2px}
+.scrim{position:absolute;inset:0;z-index:40;background:rgba(5,7,10,.55);backdrop-filter:blur(2px);opacity:0;animation:fade .2s ease forwards}
+@keyframes fade{to{opacity:1}}
+.panel{position:absolute;top:0;right:0;bottom:0;width:min(560px,100%);z-index:50;background:linear-gradient(180deg,var(--panel-2),var(--panel));border-left:1px solid var(--line-2);box-shadow:-30px 0 70px -30px rgba(0,0,0,.8);display:flex;flex-direction:column;transform:translateX(100%);animation:slideIn .32s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes slideIn{to{transform:none}}
+.panel-h{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.panel-h .ic{width:38px;height:38px;border-radius:10px;flex:none;display:grid;place-items:center;background:color-mix(in srgb,var(--ac) 15%,transparent);border:1px solid color-mix(in srgb,var(--ac) 34%,transparent);color:var(--ac)}
+.panel-h .ic svg{width:20px;height:20px}
+.panel-h .tt{flex:1;min-width:0}
+.panel-h .tt b{font-family:var(--disp);font-size:16px;font-weight:600;display:block}
+.panel-h .tt span{font-size:12px;color:var(--tx-3)}
+.xbtn{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--tx-3);border:1px solid var(--line);transition:.15s}
+.xbtn:hover{color:var(--tx);border-color:var(--line-strong);background:rgba(255,255,255,.05)}
+.panel-b{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:16px}
+.sec-t{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx-4);margin:0 0 9px}
+.field{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);padding:14px}
+.kv{display:flex;gap:10px;padding:7px 0;font-size:13.5px;border-bottom:1px solid var(--line)}
+.kv:last-child{border-bottom:none;padding-bottom:0}
+.kv:first-child{padding-top:0}
+.kv .k{color:var(--tx-3);width:120px;flex:none}
+.kv .v{color:var(--tx);flex:1}
+.kv .v a{color:var(--brand-bright);border-bottom:1px solid rgba(76,134,255,.35)}
+.dossier-desc{font-size:14px;color:var(--tx-2);line-height:1.6}
+.person{display:flex;gap:12px;padding:13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02)}
+.person+.person{margin-top:10px}
+.person .pav{width:42px;height:42px;border-radius:11px;flex:none;display:grid;place-items:center;font-weight:700;font-family:var(--disp);font-size:15px;color:#0a0f18}
+.person .pb{flex:1;min-width:0}
+.person .pb .nm{font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.person .pb .rl{font-size:12.5px;color:var(--tx-2);margin-top:2px}
+.conf{font-size:9.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:5px}
+.conf.high{color:var(--ok);background:rgba(52,211,153,.14)}
+.conf.med{color:var(--amber);background:rgba(251,191,36,.14)}
+.p-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.chipbtn{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:500;color:var(--tx-2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:rgba(255,255,255,.02);transition:.15s}
+.chipbtn:hover{color:var(--tx);border-color:var(--line-strong);background:rgba(255,255,255,.05)}
+.chipbtn svg{width:13px;height:13px}
+.caveat{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:var(--amber);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:9px;padding:9px 11px;line-height:1.4}
+.email{border:1px solid var(--line-2);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.015)}
+.email-h{padding:14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.email-h .row{display:flex;gap:10px;font-size:13px;padding:4px 0;align-items:baseline}
+.email-h .row .lb{color:var(--tx-4);width:52px;flex:none;font-size:12px}
+.email-h .row .vl{color:var(--tx);flex:1}
+.email-h .subj{font-weight:600;font-family:var(--disp);font-size:15px}
+.email-body{padding:16px;font-size:13.5px;line-height:1.62;color:var(--tx-2);white-space:pre-wrap;font-family:var(--sans)}
+.email-actions{display:flex;gap:9px;padding:0 2px}
+.btn-solid{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:13.5px;color:#fff;padding:12px;border-radius:11px;background:linear-gradient(180deg,var(--brand-bright),var(--brand));box-shadow:0 8px 22px -10px rgba(46,107,255,.7);transition:transform .12s,filter .16s}
+.btn-solid:hover{filter:brightness(1.06)}.btn-solid:active{transform:translateY(1px)}
+.btn-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:13.5px;color:var(--tx);padding:12px 16px;border-radius:11px;border:1px solid var(--line-2);background:rgba(255,255,255,.02);transition:.15s}
+.btn-outline:hover{border-color:var(--line-strong);background:rgba(255,255,255,.05)}
+.play{border:1px solid var(--line);border-radius:12px;padding:14px;background:linear-gradient(180deg,rgba(52,211,153,.06),rgba(255,255,255,.01))}
+.play .pt{font-family:var(--disp);font-weight:600;font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.play p{margin:0;color:var(--tx-2);font-size:13.5px;line-height:1.6}
+.valgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.valcard{border:1px solid var(--line);border-radius:11px;padding:12px;background:rgba(255,255,255,.02)}
+.valcard .num{font-family:var(--disp);font-weight:700;font-size:20px;background:linear-gradient(120deg,#7aa5ff,#22D3EE);-webkit-background-clip:text;background-clip:text;color:transparent}
+.valcard .lb{font-size:11.5px;color:var(--tx-3);margin-top:3px}
+.seqwrap{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.015);padding:10px;overflow:auto}
+.seqwrap svg{display:block;min-width:100%}
+.seq-note{font-size:11.5px;color:var(--tx-3);margin-top:8px;display:flex;align-items:flex-start;gap:7px;line-height:1.4}
+
+/* ============================ MULTI-COMPANY TABLE ============================ */
+.mwrap{position:relative;flex:1;overflow:auto;padding:16px 16px 28px}
+.mintro{display:flex;align-items:center;gap:10px;margin:2px 2px 14px;color:var(--tx-2);font-size:13px}
+.mintro b{color:var(--tx);font-family:var(--disp)}
+.mintro .tag{--ac:var(--violet)}
+.mhead,.mrow{display:grid;grid-template-columns:minmax(210px,1.25fr) 1.15fr 1fr 1.15fr;gap:10px}
+.mhead{padding:0 4px 8px}
+.mth{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx-4)}
+.mrow{margin-bottom:10px}
+.mcell{text-align:left;border:1px solid var(--line-2);border-radius:13px;background:linear-gradient(180deg,rgba(24,29,39,.92),rgba(16,20,28,.92));padding:12px 13px;display:flex;flex-direction:column;gap:8px;min-height:104px;transition:border-color .16s,background .16s,transform .12s;position:relative}
+button.mcell:hover{border-color:color-mix(in srgb,var(--ac,#4C86FF) 55%,transparent);background:linear-gradient(180deg,rgba(28,34,46,.95),rgba(18,22,30,.95));transform:translateY(-1px)}
+.mcell .mlab{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--tx-4);display:flex;align-items:center;gap:6px}
+.mcell .mlab svg{color:var(--ac,var(--tx-3))}
+.mcell .mval{font-size:12.5px;color:var(--tx-2);line-height:1.4}
+.mcell .mval b{color:var(--tx);font-weight:600}
+.mopen{margin-top:auto;display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--ac,var(--brand-bright))}
+.mspin{display:flex;align-items:center;gap:8px;color:var(--tx-3);font-size:12px;margin:auto 0}
+.mspin i{width:11px;height:11px;border-radius:50%;border:1.8px solid var(--ac,var(--brand-bright));border-top-color:transparent;animation:spin .7s linear infinite;flex:none}
+.mco{display:flex;gap:11px;align-items:flex-start}
+.mco .av{width:36px;height:36px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:700;font-family:var(--disp);font-size:14px;color:#07121f}
+.mco .nm{font-family:var(--disp);font-weight:600;font-size:14.5px;line-height:1.2}
+.mco .ind{font-size:11.5px;color:var(--tx-3);margin-top:2px}
+.mactions{display:flex;gap:7px;margin-top:auto;flex-wrap:wrap}
+@media (max-width:900px){
+  .mhead{display:none}
+  .mrow{grid-template-columns:1fr 1fr;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .mcell.company{grid-column:1/-1;min-height:0}
+}
+@media (max-width:560px){ .mrow{grid-template-columns:1fr} .mcell{min-height:0} }
+
+/* ============================ FIX DIAGRAM ============================ */
+.fixtoggle{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--brand-bright);border:1px dashed rgba(46,107,255,.45);border-radius:10px;padding:10px;background:rgba(46,107,255,.05);transition:.15s;margin-top:10px}
+.fixtoggle:hover{background:rgba(46,107,255,.1);border-style:solid}
+.fixbox{margin-top:10px;border:1px solid rgba(46,107,255,.32);border-radius:12px;padding:12px;background:linear-gradient(180deg,rgba(46,107,255,.08),rgba(46,107,255,.02));animation:logIn .3s ease}
+.fixbox textarea{width:100%;min-height:76px;background:rgba(5,8,14,.5);border:1px solid var(--line-2);border-radius:9px;color:var(--tx);padding:10px 11px;font-family:var(--sans);font-size:13px;line-height:1.5;resize:vertical;outline:none;box-sizing:border-box}
+.fixbox textarea:focus{border-color:rgba(46,107,255,.6)}
+.fixbox textarea::placeholder{color:var(--tx-4)}
+.fixrow{display:flex;gap:8px;margin-top:9px;align-items:center}
+.fixhint{font-size:11px;color:var(--tx-4);line-height:1.4;margin-top:8px}
+.fixgo{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:12.5px;color:#fff;padding:9px 14px;border-radius:9px;background:linear-gradient(180deg,var(--brand-bright),var(--brand));transition:.15s}
+.fixgo:disabled{opacity:.55;cursor:default}
+.fixgo .sp{width:11px;height:11px;border-radius:50%;border:1.8px solid #fff;border-top-color:transparent;animation:spin .7s linear infinite}
+
+/* ============================ PRODUCT CHIPS ============================ */
+.prodrow{display:flex;flex-wrap:wrap;gap:8px}
+.prodchip{display:flex;flex-direction:column;gap:2px;border:1px solid rgba(46,107,255,.28);border-radius:10px;padding:8px 11px;background:rgba(46,107,255,.07);flex:1 1 150px;min-width:0}
+.prodchip b{font-size:12px;color:var(--tx);font-weight:600}
+.prodchip span{font-size:10.5px;color:var(--tx-3);line-height:1.35}
+
+.toast{position:absolute;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);z-index:80;display:flex;align-items:center;gap:9px;background:rgba(18,22,30,.96);border:1px solid var(--line-2);border-radius:11px;padding:11px 15px;font-size:13px;box-shadow:var(--shadow);opacity:0;animation:toastIn .25s ease forwards}
+@keyframes toastIn{to{opacity:1;transform:translateX(-50%)}}
+.toast .ok{color:var(--ok);display:flex}
+.grip{display:none}
+
+/* byline */
+.tb-brand .byline{font-size:10px;color:var(--tx-3);letter-spacing:.05em;white-space:nowrap;margin-left:1px}
+
+/* ============================ MULTI TABLE ============================ */
+.mwrap{position:relative;flex:1;overflow:auto;padding:26px 20px 40px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.mhead{position:relative;z-index:2;width:min(1060px,100%)}
+.mhead h2{font-family:var(--disp);font-size:clamp(18px,2.6vw,23px);font-weight:600;letter-spacing:-.02em;margin:0}
+.mhead p{color:var(--tx-3);font-size:13.5px;margin:6px 0 0;line-height:1.5}
+.mtable{position:relative;z-index:2;width:min(1060px,100%);border:1px solid var(--line-2);border-radius:16px;background:linear-gradient(180deg,rgba(22,26,35,.85),rgba(15,18,25,.85));overflow:hidden;box-shadow:var(--shadow-sm)}
+.mrow{display:grid;grid-template-columns:1.45fr 1.35fr 1.1fr 1.45fr 54px;border-top:1px solid var(--line)}
+.mrow.hd{border-top:none;background:rgba(255,255,255,.03)}
+.mrow.hd .mc{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--tx-4);padding:11px 14px}
+.mc{padding:13px 14px;min-width:0;display:flex;align-items:center;gap:10px;text-align:left;border-left:1px solid var(--line)}
+.mc:first-child{border-left:none}
+button.mc{transition:background .15s}
+button.mc:hover:not(:disabled){background:rgba(255,255,255,.045)}
+button.mc:disabled{cursor:default}
+.mc .cav{width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;font-family:var(--disp);font-weight:700;font-size:12px;color:#07121f}
+.mc .ct{min-width:0;flex:1}
+.mc .ct b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+.mc .ct span{display:block;font-size:11px;color:var(--tx-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.mc .go2{margin-left:auto;color:var(--tx-4);flex:none;display:flex}
+.mcell-mini{font-size:12px;color:var(--tx-2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mspin{width:13px;height:13px;border-radius:50%;border:1.8px solid var(--tx-4);border-top-color:var(--brand-bright);animation:spin .7s linear infinite;flex:none}
+@media (max-width:760px){
+  .mrow{grid-template-columns:1fr}
+  .mrow.hd{display:none}
+  .mc{border-left:none;border-top:1px dashed var(--line)}
+  .mrow .mc:first-child{border-top:none}
+  .mc.msend{justify-content:flex-start !important}
+  .mc.msend::after{content:"Open full strategy";font-size:12.5px;font-weight:600}
+}
+
+/* ============================ FIX-DIAGRAM EDITOR ============================ */
+.fixer{margin-top:10px;border:1px solid rgba(76,134,255,.32);border-radius:12px;background:rgba(46,107,255,.06);padding:12px;animation:logIn .3s ease}
+.fixer textarea{width:100%;min-height:66px;resize:vertical;background:rgba(10,13,19,.7);border:1px solid var(--line-2);border-radius:9px;color:var(--tx);font-family:var(--sans);font-size:13px;line-height:1.5;padding:10px;outline:none}
+.fixer textarea:focus{border-color:rgba(76,134,255,.5)}
+.fixer textarea::placeholder{color:var(--tx-4)}
+.fixer .fr{display:flex;gap:8px;margin-top:9px;align-items:center}
+.fix-err{font-size:12px;color:var(--rose);margin-top:8px;line-height:1.4}
+
+@media (max-width:820px){
+  .kb{display:none}.legend{display:none}.sub{font-size:15px}
+  .ex{max-width:none;flex:1 1 100%}
+}
+@media (max-width:680px){
+  body{font-size:14.5px}
+  .topnav{padding:14px 16px}
+  .brand .wm span{display:none}
+  .hero{padding:8px 18px 40px}
+  .search{padding:8px 8px 8px 14px}
+  .go span{display:none}.go{padding:12px}
+  .examples{margin-top:20px}
+  .topbar{gap:8px;padding:10px 12px}
+  .tb-brand b{display:none}
+  .client-chip .meta b{max-width:130px}.client-chip .meta span{max-width:130px}
+  .progress-mini{gap:7px}.pbar{width:70px}
+  .mode-pill span{display:none}.mode-pill{padding:6px}
+  .tb-btn span{display:none}.tb-btn{padding:9px 10px}
+  .panel{top:auto;left:0;right:0;bottom:0;width:100%;height:88%;border-left:none;border-top:1px solid var(--line-2);border-radius:20px 20px 0 0;transform:translateY(100%);animation:sheetIn .34s cubic-bezier(.2,.8,.2,1) forwards}
+  @keyframes sheetIn{to{transform:none}}
+  .grip{display:block;width:38px;height:4px;border-radius:999px;background:var(--line-strong);margin:9px auto 0}
+  .ctrls{left:12px;bottom:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.04s !important}
+  .wire-anim{animation:none !important}
+}
+</style>
+</head>
+<body>
+<div id="splash"><div class="sp-mark"></div></div>
+<div id="root"></div>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+<script type="text/babel" data-presets="react">
+const {useState,useEffect,useRef,useCallback,useMemo} = React;
+const TF_WORDMARK = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjE4NSA1NSAzNzUgODUiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTk1LjI0NjUyNSwgMTI3LjM5MTk4OCkiPjxnPjxwYXRoIGQ9Ik0gMTkuMjY1NjI1IDAgTCAxOS4yNjU2MjUgLTYwLjU2MjUgTCAzMi41NzgxMjUgLTYwLjU2MjUgTCAzMi41NzgxMjUgMCBaIE0gMS42NTYyNSAtNDkuNDUzMTI1IEwgMS42NTYyNSAtNjAuNTYyNSBMIDUwLjI4MTI1IC02MC41NjI1IEwgNTAuMjgxMjUgLTQ5LjQ1MzEyNSBaIE0gMS42NTYyNSAtNDkuNDUzMTI1ICIvPjwvZz48L2c+PC9nPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjQ1LjE1NzE1OSwgMTI3LjM5MTk4OCkiPjxnPjxwYXRoIGQ9Ik0gNS44NzUgMCBMIDUuODc1IC00OC4xNzE4NzUgTCAxNi44NzUgLTQ4LjE3MTg3NSBMIDE2Ljc5Njg3NSAtMzEuNDY4NzUgTCAxOC41MzEyNSAtMzEuNDY4NzUgQyAxOS4wMTk1MzEgLTM1LjYyNSAxOS44NDM3NSAtMzkuMDE1NjI1IDIxIC00MS42NDA2MjUgQyAyMi4xNjQwNjIgLTQ0LjI3MzQzOCAyMy44MDA3ODEgLTQ2LjIwMzEyNSAyNS45MDYyNSAtNDcuNDIxODc1IEMgMjguMDE5NTMxIC00OC42NDg0MzggMzAuNjQwNjI1IC00OS4yNjU2MjUgMzMuNzY1NjI1IC00OS4yNjU2MjUgQyAzNC4zNzg5MDYgLTQ5LjI2NTYyNSAzNS4wMTk1MzEgLTQ5LjIzNDM3NSAzNS42ODc1IC00OS4xNzE4NzUgQyAzNi4zNjMyODEgLTQ5LjExNzE4OCAzNy4xMjg5MDYgLTQ5IDM3Ljk4NDM3NSAtNDguODEyNSBMIDM3LjUzMTI1IC0zNC43NjU2MjUgQyAzNi40ODgyODEgLTM1LjIwMzEyNSAzNS40Mjk2ODggLTM1LjUwNzgxMiAzNC4zNTkzNzUgLTM1LjY4NzUgQyAzMy4yODUxNTYgLTM1Ljg3NSAzMi4yODkwNjIgLTM1Ljk2ODc1IDMxLjM3NSAtMzUuOTY4NzUgQyAyOS4wNTA3ODEgLTM1Ljk2ODc1IDI3LjAzMTI1IC0zNS40MTQwNjIgMjUuMzEyNSAtMzQuMzEyNSBDIDIzLjYwMTU2MiAtMzMuMjA3MDMxIDIyLjI0MjE4OCAtMzEuNjEzMjgxIDIxLjIzNDM3NSAtMjkuNTMxMjUgQyAyMC4yMjI2NTYgLTI3LjQ1NzAzMSAxOS41MDM5MDYgLTI0Ljg5NDUzMSAxOS4wNzgxMjUgLTIxLjg0Mzc1IEwgMTkuMDc4MTI1IDAgWiBNIDUuODc1IDAgIi8+PC9nPjwvZz48L2c+PGcgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIxIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyODMuNzgyODcyLCAxMjcuMzkxOTg4KSI+PGc+PHBhdGggZD0iTSAxNy4yNSAxLjI4MTI1IEMgMTQuNTYyNSAxLjI4MTI1IDEyLjE3NTc4MSAwLjc2MTcxOSAxMC4wOTM3NSAtMC4yNjU2MjUgQyA4LjAwNzgxMiAtMS4zMDQ2ODggNi4zNjcxODggLTIuODIwMzEyIDUuMTcxODc1IC00LjgxMjUgQyAzLjk4NDM3NSAtNi44MDA3ODEgMy4zOTA2MjUgLTkuMjM0Mzc1IDMuMzkwNjI1IC0xMi4xMDkzNzUgQyAzLjM5MDYyNSAtMTUuNDcyNjU2IDQuMTQwNjI1IC0xOC4xMzI4MTIgNS42NDA2MjUgLTIwLjA5Mzc1IEMgNy4xNDA2MjUgLTIyLjA1MDc4MSA5LjA2NjQwNiAtMjMuNTUwNzgxIDExLjQyMTg3NSAtMjQuNTkzNzUgQyAxMy43NzM0MzggLTI1LjYzMjgxMiAxNi4yNjU2MjUgLTI2LjM4MjgxMiAxOC44OTA2MjUgLTI2Ljg0Mzc1IEMgMjEuNTIzNDM4IC0yNy4zMDA3ODEgMjMuOTcyNjU2IC0yNy42Nzk2ODggMjYuMjM0Mzc1IC0yNy45ODQzNzUgQyAyOC4zMTY0MDYgLTI4LjI4NTE1NiAzMCAtMjguNjAxNTYyIDMxLjI4MTI1IC0yOC45Mzc1IEMgMzIuNTcwMzEyIC0yOS4yODEyNSAzMy41MDM5MDYgLTI5Ljc2OTUzMSAzNC4wNzgxMjUgLTMwLjQwNjI1IEMgMzQuNjYwMTU2IC0zMS4wNTA3ODEgMzQuOTUzMTI1IC0zMS45MjU3ODEgMzQuOTUzMTI1IC0zMy4wMzEyNSBDIDM0Ljk1MzEyNSAtMzQuMjUgMzQuNjc1NzgxIC0zNS4zMTY0MDYgMzQuMTI1IC0zNi4yMzQzNzUgQyAzMy41ODIwMzEgLTM3LjE2MDE1NiAzMi43NTc4MTIgLTM3LjkxMDE1NiAzMS42NTYyNSAtMzguNDg0Mzc1IEMgMzAuNTUwNzgxIC0zOS4wNjY0MDYgMjkuMTEzMjgxIC0zOS4zNTkzNzUgMjcuMzQzNzUgLTM5LjM1OTM3NSBDIDI1LjYyNSAtMzkuMzU5Mzc1IDI0IC0zOS4wNTA3ODEgMjIuNDY4NzUgLTM4LjQzNzUgQyAyMC45NDUzMTIgLTM3LjgzMjAzMSAxOS42NDg0MzggLTM2Ljg5ODQzOCAxOC41NzgxMjUgLTM1LjY0MDYyNSBDIDE3LjUwMzkwNiAtMzQuMzkwNjI1IDE2Ljc4NTE1NiAtMzIuODE2NDA2IDE2LjQyMTg3NSAtMzAuOTIxODc1IEwgNC42NzE4NzUgLTM0LjIxODc1IEMgNS4zNDc2NTYgLTM2Ljg1MTU2MiA2LjM3NSAtMzkuMTE3MTg4IDcuNzUgLTQxLjAxNTYyNSBDIDkuMTI1IC00Mi45MTAxNTYgMTAuNzg5MDYyIC00NC40ODQzNzUgMTIuNzUgLTQ1LjczNDM3NSBDIDE0LjcwNzAzMSAtNDYuOTkyMTg4IDE2LjkxMDE1NiAtNDcuOTI1NzgxIDE5LjM1OTM3NSAtNDguNTMxMjUgQyAyMS44MDQ2ODggLTQ5LjE0NDUzMSAyNC40Njg3NSAtNDkuNDUzMTI1IDI3LjM0Mzc1IC00OS40NTMxMjUgQyAzMS4wNzAzMTIgLTQ5LjQ1MzEyNSAzNC4yNSAtNDguOTkyMTg4IDM2Ljg3NSAtNDguMDc4MTI1IEMgMzkuNTA3ODEyIC00Ny4xNjAxNTYgNDEuNjMyODEyIC00NS43Njk1MzEgNDMuMjUgLTQzLjkwNjI1IEMgNDQuODc1IC00Mi4wMzkwNjIgNDYuMDY2NDA2IC0zOS43NzM0MzggNDYuODI4MTI1IC0zNy4xMDkzNzUgQyA0Ny41OTc2NTYgLTM0LjQ1MzEyNSA0Ny45ODQzNzUgLTMxLjQxMDE1NiA0Ny45ODQzNzUgLTI3Ljk4NDM3NSBMIDQ3Ljk4NDM3NSAtMTkuNzE4NzUgQyA0Ny45ODQzNzUgLTE3LjY0NDUzMSA0OC4wMTU2MjUgLTE1LjQ4ODI4MSA0OC4wNzgxMjUgLTEzLjI1IEMgNDguMTQwNjI1IC0xMS4wMTk1MzEgNDguMjQyMTg4IC04LjgwMDc4MSA0OC4zOTA2MjUgLTYuNTkzNzUgQyA0OC41NDY4NzUgLTQuMzk0NTMxIDQ4LjcxODc1IC0yLjE5NTMxMiA0OC45MDYyNSAwIEwgMzcuMjUgMCBDIDM3LjA2MjUgLTEuNjU2MjUgMzYuODU5Mzc1IC0zLjQ3MjY1NiAzNi42NDA2MjUgLTUuNDUzMTI1IEMgMzYuNDI5Njg4IC03LjQ0MTQwNiAzNi4yOTY4NzUgLTkuNDc2NTYyIDM2LjIzNDM3NSAtMTEuNTYyNSBMIDM0LjY4NzUgLTExLjU2MjUgQyAzMy44MjAzMTIgLTkuMjM4MjgxIDMyLjU5Mzc1IC03LjA4MjAzMSAzMSAtNS4wOTM3NSBDIDI5LjQxNDA2MiAtMy4xMDE1NjIgMjcuNDYwOTM4IC0xLjUzOTA2MiAyNS4xNDA2MjUgLTAuNDA2MjUgQyAyMi44MTY0MDYgMC43MTQ4NDQgMjAuMTg3NSAxLjI4MTI1IDE3LjI1IDEuMjgxMjUgWiBNIDIyLjg0Mzc1IC04LjM0Mzc1IEMgMjQuMDA3ODEyIC04LjM0Mzc1IDI1LjE4NzUgLTguNTM5MDYyIDI2LjM3NSAtOC45Mzc1IEMgMjcuNTcwMzEyIC05LjM0Mzc1IDI4LjczNDM3NSAtOS45NDE0MDYgMjkuODU5Mzc1IC0xMC43MzQzNzUgQyAzMC45OTIxODggLTExLjUyMzQzOCAzMi4wMzUxNTYgLTEyLjUzMTI1IDMyLjk4NDM3NSAtMTMuNzUgQyAzMy45Mjk2ODggLTE0Ljk3NjU2MiAzNC42Nzk2ODggLTE2LjM1OTM3NSAzNS4yMzQzNzUgLTE3Ljg5MDYyNSBMIDM1LjA0Njg3NSAtMjUuMTQwNjI1IEwgMzcuMTU2MjUgLTI0Ljc2NTYyNSBDIDM2LjExMzI4MSAtMjMuOTcyNjU2IDM0Ljg3NSAtMjMuMzQ3NjU2IDMzLjQzNzUgLTIyLjg5MDYyNSBDIDMyIC0yMi40Mjk2ODggMzAuNSAtMjIuMDc4MTI1IDI4LjkzNzUgLTIxLjgyODEyNSBDIDI3LjM4MjgxMiAtMjEuNTg1OTM4IDI1Ljg0Mzc1IC0yMS4zMTI1IDI0LjMxMjUgLTIxIEMgMjIuNzgxMjUgLTIwLjY5NTMxMiAyMS4zOTg0MzggLTIwLjMwMDc4MSAyMC4xNzE4NzUgLTE5LjgxMjUgQyAxOC45NTMxMjUgLTE5LjMyMDMxMiAxNy45NzI2NTYgLTE4LjY0ODQzOCAxNy4yMzQzNzUgLTE3Ljc5Njg3NSBDIDE2LjUwMzkwNiAtMTYuOTQxNDA2IDE2LjE0MDYyNSAtMTUuNzgxMjUgMTYuMTQwNjI1IC0xNC4zMTI1IEMgMTYuMTQwNjI1IC0xMi40NzY1NjIgMTYuNzY1NjI1IC0xMS4wMjM0MzggMTguMDE1NjI1IC05Ljk1MzEyNSBDIDE5LjI3MzQzOCAtOC44Nzg5MDYgMjAuODgyODEyIC04LjM0Mzc1IDIyLjg0Mzc1IC04LjM0Mzc1IFogTSAyMi44NDM3NSAtOC4zNDM3NSAiLz48L2c+PC9nPjwvZz48ZyBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMzNy4wODgyMjIsIDEyNy4zOTE5ODgpIj48Zz48cGF0aCBkPSJNIDUuODc1IDAgTCA1Ljg3NSAtNDguMTcxODc1IEwgMTYuNzAzMTI1IC00OC4xNzE4NzUgTCAxNi42MDkzNzUgLTMzLjIxODc1IEwgMTguMzQzNzUgLTMzLjIxODc1IEMgMTkuMTQ0NTMxIC0zNy4xODc1IDIwLjMyMDMxMiAtNDAuMzQ3NjU2IDIxLjg3NSAtNDIuNzAzMTI1IEMgMjMuNDM3NSAtNDUuMDU0Njg4IDI1LjMzMjAzMSAtNDYuNzY5NTMxIDI3LjU2MjUgLTQ3Ljg0Mzc1IEMgMjkuODAwNzgxIC00OC45MTQwNjIgMzIuMzI4MTI1IC00OS40NTMxMjUgMzUuMTQwNjI1IC00OS40NTMxMjUgQyAzOC4zMTY0MDYgLTQ5LjQ1MzEyNSA0MC45Mjk2ODggLTQ4Ljg4MjgxMiA0Mi45ODQzNzUgLTQ3Ljc1IEMgNDUuMDM1MTU2IC00Ni42MjUgNDYuNjcxODc1IC00NS4xNDA2MjUgNDcuODkwNjI1IC00My4yOTY4NzUgQyA0OS4xMTcxODggLTQxLjQ2MDkzOCA1MC4wMzUxNTYgLTM5LjQ2MDkzOCA1MC42NDA2MjUgLTM3LjI5Njg3NSBDIDUxLjI1MzkwNiAtMzUuMTI4OTA2IDUxLjY0ODQzOCAtMzIuOTcyNjU2IDUxLjgyODEyNSAtMzAuODI4MTI1IEMgNTIuMDE1NjI1IC0yOC42Nzk2ODggNTIuMTA5Mzc1IC0yNi43NTM5MDYgNTIuMTA5Mzc1IC0yNS4wNDY4NzUgTCA1Mi4xMDkzNzUgMCBMIDM4LjkwNjI1IDAgTCAzOC45MDYyNSAtMjMuNDg0Mzc1IEMgMzguOTA2MjUgLTI0LjY0ODQzOCAzOC44NDM3NSAtMjYuMDU0Njg4IDM4LjcxODc1IC0yNy43MDMxMjUgQyAzOC41OTM3NSAtMjkuMzU5Mzc1IDM4LjI2OTUzMSAtMzAuOTkyMTg4IDM3Ljc1IC0zMi42MDkzNzUgQyAzNy4yMjY1NjIgLTM0LjIzNDM3NSAzNi4zNjcxODggLTM1LjU5Mzc1IDM1LjE3MTg3NSAtMzYuNjg3NSBDIDMzLjk4NDM3NSAtMzcuNzg5MDYyIDMyLjMyMDMxMiAtMzguMzQzNzUgMzAuMTg3NSAtMzguMzQzNzUgQyAyNy43MzgyODEgLTM4LjM0Mzc1IDI1LjcwMzEyNSAtMzcuNTkzNzUgMjQuMDc4MTI1IC0zNi4wOTM3NSBDIDIyLjQ2MDkzOCAtMzQuNjAxNTYyIDIxLjIyMjY1NiAtMzIuNTcwMzEyIDIwLjM1OTM3NSAtMzAgQyAxOS41MDM5MDYgLTI3LjQzNzUgMTkuMDc4MTI1IC0yNC41NjI1IDE5LjA3ODEyNSAtMjEuMzc1IEwgMTkuMDc4MTI1IDAgWiBNIDUuODc1IDAgIi8+PC9nPjwvZz48L2c+PGcgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIxIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzOTQuNDMwNDU3LCAxMjcuMzkxOTg4KSI+PGc+PHBhdGggZD0iTSAyNS4yMzQzNzUgMS4yODEyNSBDIDIxLjk5MjE4OCAxLjI4MTI1IDE5LjA1NDY4OCAwLjk3MjY1NiAxNi40MjE4NzUgMC4zNTkzNzUgQyAxMy43OTY4NzUgLTAuMjQyMTg4IDExLjUzNTE1NiAtMS4xNDA2MjUgOS42NDA2MjUgLTIuMzI4MTI1IEMgNy43NDIxODggLTMuNTIzNDM4IDYuMjEwOTM4IC00Ljk2MDkzOCA1LjA0Njg3NSAtNi42NDA2MjUgQyAzLjg3ODkwNiAtOC4zMjgxMjUgMy4xNDQ1MzEgLTEwLjIxMDkzOCAyLjg0Mzc1IC0xMi4yOTY4NzUgTCAxMy4wMzEyNSAtMTYuMTQwNjI1IEMgMTMuMjY5NTMxIC0xNC43OTY4NzUgMTMuOTI1NzgxIC0xMy41MjM0MzggMTUgLTEyLjMyODEyNSBDIDE2LjA3MDMxMiAtMTEuMTQwNjI1IDE3LjUyMzQzOCAtMTAuMTkxNDA2IDE5LjM1OTM3NSAtOS40ODQzNzUgQyAyMS4xOTE0MDYgLTguNzg1MTU2IDIzLjQyNTc4MSAtOC40Mzc1IDI2LjA2MjUgLTguNDM3NSBDIDI4LjgxMjUgLTguNDM3NSAzMC45NDUzMTIgLTguODQ3NjU2IDMyLjQ2ODc1IC05LjY3MTg3NSBDIDM0IC0xMC41MDM5MDYgMzQuNzY1NjI1IC0xMS42ODc1IDM0Ljc2NTYyNSAtMTMuMjE4NzUgQyAzNC43NjU2MjUgLTE0LjM3NSAzNC4zMzU5MzggLTE1LjI4NTE1NiAzMy40ODQzNzUgLTE1Ljk1MzEyNSBDIDMyLjYyODkwNiAtMTYuNjI4OTA2IDMxLjM5MDYyNSAtMTcuMjEwOTM4IDI5Ljc2NTYyNSAtMTcuNzAzMTI1IEMgMjguMTQ4NDM4IC0xOC4xOTE0MDYgMjYuMTc5Njg4IC0xOC42NDg0MzggMjMuODU5Mzc1IC0xOS4wNzgxMjUgQyAyMS41MzUxNTYgLTE5LjYyODkwNiAxOS4xOTE0MDYgLTIwLjIyNjU2MiAxNi44MjgxMjUgLTIwLjg3NSBDIDE0LjQ3MjY1NiAtMjEuNTE5NTMxIDEyLjMwMDc4MSAtMjIuMzkwNjI1IDEwLjMxMjUgLTIzLjQ4NDM3NSBDIDguMzMyMDMxIC0yNC41ODU5MzggNi43MjY1NjIgLTI2LjAyMzQzOCA1LjUgLTI3Ljc5Njg3NSBDIDQuMjgxMjUgLTI5LjU3ODEyNSAzLjY3MTg3NSAtMzEuODQzNzUgMy42NzE4NzUgLTM0LjU5Mzc1IEMgMy42NzE4NzUgLTM3LjU4MjAzMSA0LjQ2MDkzOCAtNDAuMTc1NzgxIDYuMDQ2ODc1IC00Mi4zNzUgQyA3LjY0MDYyNSAtNDQuNTgyMDMxIDkuOTc2NTYyIC00Ni4zMTI1IDEzLjA2MjUgLTQ3LjU2MjUgQyAxNi4xNTYyNSAtNDguODIwMzEyIDE5Ljg3NSAtNDkuNDUzMTI1IDI0LjIxODc1IC00OS40NTMxMjUgQyAyOC4xOTUzMTIgLTQ5LjQ1MzEyNSAzMS42Nzk2ODggLTQ4LjkxNDA2MiAzNC42NzE4NzUgLTQ3Ljg0Mzc1IEMgMzcuNjcxODc1IC00Ni43Njk1MzEgNDAuMTE3MTg4IC00NS4yMDcwMzEgNDIuMDE1NjI1IC00My4xNTYyNSBDIDQzLjkxMDE1NiAtNDEuMTEzMjgxIDQ1LjE2NDA2MiAtMzguNjU2MjUgNDUuNzgxMjUgLTM1Ljc4MTI1IEwgMzUuMDQ2ODc1IC0zMi4zOTA2MjUgQyAzNC44MDQ2ODggLTMzLjkyMTg3NSAzNC4yMjI2NTYgLTM1LjI1IDMzLjI5Njg3NSAtMzYuMzc1IEMgMzIuMzc4OTA2IC0zNy41MDc4MTIgMzEuMTQwNjI1IC0zOC4zNTE1NjIgMjkuNTc4MTI1IC0zOC45MDYyNSBDIDI4LjAyMzQzOCAtMzkuNDU3MDMxIDI2LjIwNzAzMSAtMzkuNzM0Mzc1IDI0LjEyNSAtMzkuNzM0Mzc1IEMgMjEuNTYyNSAtMzkuNzM0Mzc1IDE5LjU2MjUgLTM5LjMwMDc4MSAxOC4xMjUgLTM4LjQzNzUgQyAxNi42ODc1IC0zNy41ODIwMzEgMTUuOTY4NzUgLTM2LjQ1MzEyNSAxNS45Njg3NSAtMzUuMDQ2ODc1IEMgMTUuOTY4NzUgLTMzLjg5MDYyNSAxNi40NDE0MDYgLTMyLjk0MTQwNiAxNy4zOTA2MjUgLTMyLjIwMzEyNSBDIDE4LjMzNTkzOCAtMzEuNDcyNjU2IDE5LjY0ODQzOCAtMzAuODc4OTA2IDIxLjMyODEyNSAtMzAuNDIxODc1IEMgMjMuMDE1NjI1IC0yOS45NjA5MzggMjUuMDE5NTMxIC0yOS40ODgyODEgMjcuMzQzNzUgLTI5IEMgMjkuNzg5MDYyIC0yOC41MDc4MTIgMzIuMTYwMTU2IC0yNy45NDE0MDYgMzQuNDUzMTI1IC0yNy4yOTY4NzUgQyAzNi43NDIxODggLTI2LjY0ODQzOCAzOC44MzU5MzggLTI1LjgwNDY4OCA0MC43MzQzNzUgLTI0Ljc2NTYyNSBDIDQyLjYyODkwNiAtMjMuNzM0Mzc1IDQ0LjE0MDYyNSAtMjIuMzU5Mzc1IDQ1LjI2NTYyNSAtMjAuNjQwNjI1IEMgNDYuMzk4NDM4IC0xOC45Mjk2ODggNDYuOTY4NzUgLTE2LjcwMzEyNSA0Ni45Njg3NSAtMTMuOTUzMTI1IEMgNDYuOTY4NzUgLTEwLjc2NTYyNSA0Ni4xMTMyODEgLTguMDM5MDYyIDQ0LjQwNjI1IC01Ljc4MTI1IEMgNDIuNjk1MzEyIC0zLjUxOTUzMSA0MC4yMTg3NSAtMS43NzM0MzggMzYuOTY4NzUgLTAuNTQ2ODc1IEMgMzMuNzI2NTYyIDAuNjY3OTY5IDI5LjgxNjQwNiAxLjI4MTI1IDI1LjIzNDM3NSAxLjI4MTI1IFogTSAyNS4yMzQzNzUgMS4yODEyNSAiLz48L2c+PC9nPjwvZz48ZyBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQ0NC4wNjU5MywgMTI3LjM5MTk4OCkiPjxnPjxwYXRoIGQ9Ik0gNi41MTU2MjUgMCBMIDYuNTE1NjI1IC02MC41NjI1IEwgMTkuNzE4NzUgLTYwLjU2MjUgTCAxOS43MTg3NSAwIFogTSAxMi43NSAtMjIuNjU2MjUgTCAxMi43NSAtMzMuNDg0Mzc1IEwgNDcuNzk2ODc1IC0zMy40ODQzNzUgTCA0Ny43OTY4NzUgLTIyLjY1NjI1IFogTSAxMi43NSAtNDkuMjY1NjI1IEwgMTIuNzUgLTYwLjU2MjUgTCA1MS4yMDMxMjUgLTYwLjU2MjUgTCA1MS4yMDMxMjUgLTQ5LjI2NTYyNSBaIE0gMTIuNzUgLTQ5LjI2NTYyNSAiLz48L2c+PC9nPjwvZz48ZyBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQ5Ny45MjE3NjIsIDEyNy4zOTE5ODgpIj48Zz48cGF0aCBkPSJNIDUuODc1IDAgTCA1Ljg3NSAtNDguMTcxODc1IEwgMTkuMDc4MTI1IC00OC4xNzE4NzUgTCAxOS4wNzgxMjUgMCBaIE0gMTIuNDY4NzUgLTU1LjE0MDYyNSBDIDkuOTA2MjUgLTU1LjE0MDYyNSA3LjkyOTY4OCAtNTUuNjkxNDA2IDYuNTQ2ODc1IC01Ni43OTY4NzUgQyA1LjE3MTg3NSAtNTcuODk4NDM4IDQuNDg0Mzc1IC01OS40NTcwMzEgNC40ODQzNzUgLTYxLjQ2ODc1IEMgNC40ODQzNzUgLTYzLjYxMzI4MSA1LjE3MTg3NSAtNjUuMjM0Mzc1IDYuNTQ2ODc1IC02Ni4zMjgxMjUgQyA3LjkyOTY4OCAtNjcuNDI5Njg4IDkuOTA2MjUgLTY3Ljk4NDM3NSAxMi40Njg3NSAtNjcuOTg0Mzc1IEMgMTUuMTAxNTYyIC02Ny45ODQzNzUgMTcuMTA5Mzc1IC02Ny40Mjk2ODggMTguNDg0Mzc1IC02Ni4zMjgxMjUgQyAxOS44NTkzNzUgLTY1LjIzNDM3NSAyMC41NDY4NzUgLTYzLjYxMzI4MSAyMC41NDY4NzUgLTYxLjQ2ODc1IEMgMjAuNTQ2ODc1IC01OS40NTcwMzEgMTkuODU5Mzc1IC01Ny44OTg0MzggMTguNDg0Mzc1IC01Ni43OTY4NzUgQyAxNy4xMDkzNzUgLTU1LjY5MTQwNiAxNS4xMDE1NjIgLTU1LjE0MDYyNSAxMi40Njg3NSAtNTUuMTQwNjI1IFogTSAxMi40Njg3NSAtNTUuMTQwNjI1ICIvPjwvZz48L2c+PC9nPjwvc3ZnPg==";
+
+/* ============================ ICONS ============================ */
+const P = {
+  search:"M11 4a7 7 0 1 0 4.95 11.95L20 20M11 4a7 7 0 0 1 0 14",
+  arrow:"M5 12h14M13 6l6 6-6 6",
+  target:"M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 4a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z",
+  route:"M6 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm12-9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 13V9a4 4 0 0 1 4-4h4M18 11v3a4 4 0 0 1-4 4h-3",
+  users:"M16 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M9.5 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM21 20v-1a4 4 0 0 0-3-3.87M16 4.13A4 4 0 0 1 16 12",
+  mail:"M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm0 1 8 6 8-6",
+  brain:"M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5.8A3 3 0 0 0 6 18a3 3 0 0 0 3 2V4Zm6 0a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8A3 3 0 0 1 18 18a3 3 0 0 1-3 2V4Z",
+  spark:"M12 3l1.9 5.2L19 10l-5.1 1.8L12 17l-1.9-5.2L5 10l5.1-1.8L12 3Z",
+  check:"M20 6 9 17l-5-5",
+  x:"M6 6l12 12M18 6 6 18",
+  plus:"M12 5v14M5 12h14",
+  minus:"M5 12h14",
+  fit:"M4 9V5a1 1 0 0 1 1-1h4M20 9V5a1 1 0 0 0-1-1h-4M4 15v4a1 1 0 0 0 1 1h4M20 15v4a1 1 0 0 1-1 1h-4",
+  copy:"M9 9h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1ZM5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1",
+  send:"M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z",
+  ext:"M14 4h6v6M20 4l-9 9M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6",
+  linkedin:"M4.98 3.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM3.5 9h3v11h-3V9Zm5 0h2.85v1.5h.04c.4-.75 1.37-1.55 2.82-1.55 3 0 3.56 1.98 3.56 4.55V20h-3v-4.9c0-1.17-.02-2.67-1.63-2.67-1.63 0-1.88 1.27-1.88 2.58V20h-3V9Z",
+  info:"M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 5v.01M11 11h1v5h1",
+  bolt:"M13 2 4 14h6l-1 8 9-12h-6l1-8Z",
+  globe:"M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 0c-2.5 2-3.5 5-3.5 9s1 7 3.5 9m0-18c2.5 2 3.5 5 3.5 9s-1 7-3.5 9M3.5 9h17M3.5 15h17",
+  layers:"M12 3 3 8l9 5 9-5-9-5ZM3 13l9 5 9-5M3 18l9 5 9-5",
+  dossier:"M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm8 0v6h6M9 13h6M9 17h6",
+  refresh:"M21 12a9 9 0 1 1-2.64-6.36M21 3v5h-5",
+  chevR:"M9 6l6 6-6 6",
+  db:"M12 3c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3Zm8 3v6c0 1.7-3.6 3-8 3s-8-1.3-8-3V6m16 6v6c0 1.7-3.6 3-8 3s-8-1.3-8-3v-6",
+  wand:"M15 4V2M15 10V8M11 6h2M17 6h2M6 21 18 9l-3-3L3 18l3 3ZM14 7l3 3",
+  news:"M4 5h12a1 1 0 0 1 1 1v12a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2V5Zm13 3h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2M8 9h5M8 13h5M8 17h5"
+};
+function Icon({n,s=18,sw=1.8,fill=false}){
+  return (<svg width={s} height={s} viewBox="0 0 24 24" fill={fill?"currentColor":"none"}
+    stroke={fill?"none":"currentColor"} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+    <path d={P[n]}/></svg>);
+}
+
+/* ============================ HELPERS ============================ */
+function initials(name){
+  if(!name) return "?";
+  const w=name.replace(/[^A-Za-z0-9À-ÿ &]/g,"").trim().split(/\s+/).filter(Boolean);
+  if(w.length===1) return w[0].slice(0,2).toUpperCase();
+  return (w[0][0]+w[w.length-1][0]).toUpperCase();
+}
+function hostOf(url){ try{ return new URL(url).hostname.replace(/^www\./,""); }catch(e){ return (url||"").replace(/^https?:\/\//,"").replace(/^www\./,"").split("/")[0]; } }
+function normUrl(u){
+  u=(u||"").trim();
+  if(!u) return "";
+  if(!/^https?:\/\//i.test(u)) u="https://"+u;
+  return u;
+}
+function copyText(t){
+  try{
+    if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t); return true; }
+  }catch(e){}
+  try{
+    const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); return true;
+  }catch(e){ return false; }
+}
+function linkedinSearch(name,company){
+  const q=encodeURIComponent([name,company].filter(Boolean).join(" "));
+  return "https://www.linkedin.com/search/results/people/?keywords="+q;
+}
+function instColor(inst){
+  const k=(inst||"").toLowerCase();
+  if(k.includes("eurxt")) return "var(--brand-bright)";
+  if(k.includes("usdt")||k.includes("usdc")||k.includes("stablecoin")||k.includes("usd")) return "var(--green)";
+  if(k.includes("qr")||k.includes("payout")) return "var(--teal)";
+  if(k.includes("bank")||k.includes("data")||k.includes("ecosystem")||k.includes("recon")) return "var(--violet)";
+  return "#E5C07B"; // fiat / eur / local currency
+}
+
+/* ============================ TRANSFI VALUE PROPS ============================ */
+const TF = {
+  methods:"250+",
+  countries:"70+",
+  props:[
+    {num:"250+", lb:"Alternative payment methods"},
+    {num:"70+", lb:"Countries covered"},
+    {num:"40+", lb:"Local currencies on/off-ramp"},
+    {num:"<1%", lb:"Blended settlement fees"},
+  ],
+  blurb:"TransFi is a global payments network offering 250+ alternative payment methods across 70+ countries, powering fiat on/off-ramps, stablecoin settlement and instant payouts for leading crypto exchanges, banks and remittance companies worldwide.",
+  signoff:"Aarav Menon\nStrategic Partnerships, TransFi\naarav.menon@transfi.com  ·  transfi.com"
+};
+
+/* ============================ KNOWLEDGE BASE (learned patterns) ============================ */
+const KB_PATTERNS = [
+  {id:"issuer", label:"Stablecoin issuer / bank", color:"var(--brand-bright)"},
+  {id:"prop",   label:"Prop trading / funded accounts", color:"var(--green)"},
+  {id:"payout", label:"Stablecoin prefunding & payouts", color:"var(--teal)"},
+  {id:"remit",  label:"Cross-border remittance", color:"var(--violet)"},
+  {id:"exchange",label:"Exchange on/off-ramp", color:"var(--amber)"},
+  {id:"marketplace",label:"Marketplace / platform collection", color:"var(--rose)"},
+  {id:"gaming", label:"Web3 gaming / NFT", color:"#FB923C"},
+];
+const KB_BASE_COUNT = 148;
+
+/* ============================ AGENT META ============================ */
+const AGENTS = [
+  {id:"client",  name:"Client Identifier", role:"Resolves the true prospect", icon:"target", ac:"var(--teal)"},
+  {id:"flow",    name:"Flow Architect",    role:"Designs the payment rail",   icon:"route",  ac:"var(--green)"},
+  {id:"contacts",name:"Contact Finder",    role:"Surfaces decision-makers",   icon:"users",  ac:"var(--violet)"},
+  {id:"email",   name:"Outreach Writer",   role:"Drafts the cold email",      icon:"mail",   ac:"var(--amber)"},
+];
+const AGENT_BY_ID = Object.fromEntries(AGENTS.map(a=>[a.id,a]));
+
+/* ============================ TRANSFI PRODUCT ONTOLOGY ============================ */
+const TRANSFI_PRODUCTS=[
+ {id:"payin",   name:"Fiat Collection (Pay-in)",        spec:"250+ local methods · 70+ countries",        ideal:"checkout, exchange top-ups, marketplaces"},
+ {id:"f2s",     name:"Fiat → Stablecoin Conversion",    spec:"USD, EUR & local fiat into USDT/USDC/EUR tokens", ideal:"on-ramping customer fiat into digital dollars or euros"},
+ {id:"redeem",  name:"Stablecoin → Fiat Redemption",    spec:"OTC, QR & bank transfer · <1% blended fees",ideal:"turning stablecoin liquidity into spendable local money"},
+ {id:"ramp",    name:"Crypto On/Off-Ramp",              spec:"native crypto deposits & withdrawals",       ideal:"exchanges, wallets and dApps"},
+ {id:"checkout",name:"E-commerce Checkout",             spec:"embedded, Shopify-style payment widget",     ideal:"online stores, games and digital goods"},
+ {id:"otc",     name:"Institutional OTC",               spec:"large block trades with deep liquidity",     ideal:"treasuries and funds moving size"},
+ {id:"swap",    name:"Crypto Swap",                     spec:"on-platform asset-to-asset conversion",      ideal:"multi-asset platforms"},
+ {id:"va",      name:"Virtual Accounts",                spec:"local IBAN / ACH named collection accounts", ideal:"named collections and partner prefunding"},
+ {id:"payout",  name:"Cross-border Payouts",            spec:"45+ countries · instant settlement incl. QR",ideal:"mass payouts to users, merchants and suppliers"},
+ {id:"treasury",name:"Treasury",                        spec:"stablecoin holdings & liquidity management", ideal:"platforms holding digital-asset float"},
+];
+const PRODUCT_BY_ID=Object.fromEntries(TRANSFI_PRODUCTS.map(p=>[p.id,p]));
+const ONTOLOGY_TEXT=TRANSFI_PRODUCTS.map(p=>`- [${p.id}] ${p.name}: ${p.spec}. Ideal for ${p.ideal}.`).join("\n");
+const MODEL_TO_PRODUCTS={
+ "Stablecoin issuer / bank":["f2s","payin","treasury"],
+ "Prop trading / funded accounts":["payin","f2s","payout"],
+ "Stablecoin prefunding & payouts":["redeem","payout","swap"],
+ "Cross-border remittance":["payin","payout","va"],
+ "Exchange on/off-ramp":["ramp","payin","f2s"],
+ "Marketplace / platform collection":["checkout","payin","payout"],
+ "Web3 gaming / NFT":["checkout","ramp","payout"],
+};
+const PATTERN_LIST=Object.keys(MODEL_TO_PRODUCTS);
+
+/* ============================ CURATED CLIENT INTELLIGENCE ============================ */
+const kindColor = k => ({ext:"#8A93A3",tf:"var(--brand-bright)",client:"var(--green)",bank:"var(--violet)",end:"var(--teal)"}[k]||"#8A93A3");
+
+const CURATED = {
+  credit_agricole: {
+    match:(u)=> /credit-agricole|coindesk|eurxt/i.test(u),
+    accent:"#4C86FF",
+    client:{
+      name:"Crédit Agricole", industry:"Banking · Stablecoins", hq:"Montrouge, France",
+      website:"credit-agricole.com", emailPattern:"first.last@ca-cib.com", pattern:"Stablecoin issuer / bank",
+      description:"One of Europe's largest banking groups and a top-tier retail and corporate & investment bank. Crédit Agricole is moving into regulated digital assets with EURXT, a euro-pegged stablecoin, to modernise settlement and cross-border banking for its corporate clients.",
+      businessModel:"Universal bank now issuing a regulated euro stablecoin (EURXT). Revenue spans corporate & investment banking, cash management, custody and — newly — on-chain euro settlement, where value depends on real payment demand and easy on/off-ramps.",
+      keyInsight:"EURXT only creates value once euros actually flow through it. Crédit Agricole needs global demand and frictionless fiat-to-EURXT rails to seed adoption among importers and suppliers."
+    },
+    play:{ headline:"Be the demand engine for EURXT",
+      rationale:"Position TransFi as Crédit Agricole's global fiat-to-EURXT on-ramp. CA keeps the banking, custody and ecosystem relationship; TransFi supplies the cross-border volume that makes a new euro stablecoin genuinely useful. Land-and-expand from a single corridor (e.g. Asia→EU imports) into multi-market settlement." },
+    flow:{
+      title:"Importer fiat → EURXT settlement, banked by Crédit Agricole",
+      products:["f2s","payin","va"],
+      summary:"TransFi becomes the on-ramp that turns overseas fiat into EURXT and delivers it to European suppliers, while Crédit Agricole owns the ecosystem and banking layer.",
+      participants:[
+        {name:"Overseas Importer", short:"Importer", kind:"ext"},
+        {name:"TransFi", short:"TransFi", kind:"tf"},
+        {name:"European Supplier", short:"EU Supplier", kind:"client"},
+        {name:"Crédit Agricole", short:"Crédit Agricole", kind:"bank"},
+      ],
+      steps:[
+        {from:0,to:1,label:"Sends fiat payment",instrument:"Fiat"},
+        {from:1,to:1,label:"Convert fiat → EUR, mint EURXT",instrument:"EURXT"},
+        {from:1,to:2,label:"Transfers EURXT to supplier",instrument:"EURXT"},
+        {from:3,to:2,label:"Manages EURXT ecosystem & banking",instrument:"Banking"},
+      ]
+    },
+    contacts:[
+      {name:"Philippe Brassac", title:"Chief Executive Officer, Crédit Agricole S.A.", confidence:"med", inferred:true, email:"philippe.brassac@credit-agricole-sa.fr", relevance:"Sponsors group-level digital-asset strategy"},
+      {name:null, title:"Head of Digital Assets & Tokenisation", confidence:"high", inferred:true, email:"first.last@ca-cib.com", relevance:"Owns the EURXT product & issuance roadmap"},
+      {name:null, title:"Head of Payments & Cash Management, CACIB", confidence:"high", inferred:true, email:"first.last@ca-cib.com", relevance:"Controls corporate settlement flows & rails"},
+      {name:null, title:"Head of Fintech Partnerships", confidence:"med", inferred:true, email:"first.last@ca-cib.com", relevance:"Owns third-party integrations like TransFi"},
+    ],
+    email:{ to:"digital-assets@ca-cib.com", subject:"EURXT adoption — turning overseas fiat into euro settlement",
+body:`Hi Crédit Agricole team,
+
+Congratulations on the EURXT rollout — a regulated euro stablecoin from a bank of your stature is a real signal for on-chain settlement in Europe.
+
+The open question with any new stablecoin is demand: euros only create value once they actually flow through EURXT. That is exactly where TransFi fits.
+
+We would act as the global on-ramp into your ecosystem:
+  1. An overseas importer pays in their local currency.
+  2. TransFi collects and settles the fiat.
+  3. We convert it to EUR and mint EURXT.
+  4. EURXT lands with the European supplier, ready to hold or spend.
+  5. Crédit Agricole owns the banking and ecosystem layer around the supplier.
+
+TransFi brings 250+ payment methods across 70+ countries and already settles for leading exchanges, banks and remittance firms — so you get immediate cross-border volume into EURXT without building the collection layer yourselves.
+
+Worth a 20-minute call to map this to your launch corridors? I can share a short flow diagram and a couple of live reference flows.
+
+Best,
+`+TF.signoff }
+  },
+
+  qt_funded: {
+    match:(u)=> /qtfunded|quanttekel|qt-funded/i.test(u),
+    accent:"#F59E0B",
+    client:{
+      name:"QT Funded", industry:"Proprietary trading · Funded accounts", hq:"Global (online)",
+      website:"qtfunded.quanttekel.com", emailPattern:"first@qtfunded.com", pattern:"Prop trading / funded accounts",
+      description:"A proprietary trading firm that funds skilled retail traders. Traders pay to take an evaluation ('challenge'); those who pass trade firm capital and keep a profit split. Volume is global and fee collection happens entirely at online checkout.",
+      businessModel:"Sells evaluation challenges and subscriptions to traders worldwide, then pays profit splits to funded traders. Two money movements matter: inbound challenge fees (many countries, many methods) and outbound trader payouts.",
+      keyInsight:"Conversion at checkout is everything — every unsupported card or wallet is a lost signup. Payouts to global traders must be fast and cheap to protect the firm's reputation."
+    },
+    play:{ headline:"Own the money movement, both directions",
+      rationale:"TransFi becomes QT Funded's checkout and payout layer: collect challenge fees in 250+ local methods to lift conversion, auto-convert to USDT and settle to treasury, then push trader payouts back out on the same rails. One integration removes card-decline churn and payout complexity at once." },
+    flow:{
+      title:"Checkout fiat in, USDT settled to the desk",
+      products:["payin","f2s","payout"],
+      summary:"TransFi runs the global checkout — collecting challenge fees in local methods and settling USDT to QT Funded's treasury, with optional trader payouts on the same rails.",
+      participants:[
+        {name:"Global Trader", short:"Trader", kind:"ext"},
+        {name:"TransFi", short:"TransFi", kind:"tf"},
+        {name:"QT Funded Treasury", short:"QT Treasury", kind:"client"},
+      ],
+      steps:[
+        {from:0,to:1,label:"Pays challenge fee at checkout",instrument:"Fiat"},
+        {from:1,to:1,label:"Collect (250+ methods) & convert to USDT",instrument:"USDT"},
+        {from:1,to:2,label:"Settles USDT to platform treasury",instrument:"USDT"},
+        {from:2,to:1,label:"Instructs trader profit payout",instrument:"USDT"},
+        {from:1,to:0,label:"Pays out to trader on local rails",instrument:"Payout"},
+      ]
+    },
+    contacts:[
+      {name:null, title:"Founder / CEO", confidence:"med", inferred:true, email:"first@qtfunded.com", relevance:"Owns growth & treasury decisions"},
+      {name:null, title:"Head of Payments / Finance", confidence:"high", inferred:true, email:"first@qtfunded.com", relevance:"Owns checkout conversion & settlement"},
+      {name:null, title:"Head of Partnerships / Operations", confidence:"med", inferred:true, email:"partnerships@qtfunded.com", relevance:"Integrates payment providers"},
+    ],
+    email:{ to:"partnerships@qtfunded.com", subject:"Cut checkout drop-off — global fiat in, USDT to your desk",
+body:`Hi QT Funded team,
+
+Prop firms live and die on two money movements: challenge fees coming in, and payouts going out. Both are global — and both are where a single provider can lift conversion and cut cost.
+
+Here is how TransFi would run it for QT Funded:
+  1. A trader pays their challenge fee at checkout in whatever is local to them.
+  2. TransFi collects across 250+ payment methods and converts to USDT.
+  3. We settle USDT straight to your treasury.
+  4. When a funded trader earns a split, you instruct the payout.
+  5. TransFi pays them out on local rails, fast.
+
+We cover 70+ countries and already settle for leading exchanges, banks and remittance companies, so every unsupported card or wallet you lose today becomes a completed signup — and your payout ops get simpler, not harder.
+
+Open to a quick call? I can walk through the flow and share live reference integrations from similar platforms.
+
+Best,
+`+TF.signoff }
+  },
+
+  moretapay: {
+    match:(u)=> /moretapay/i.test(u),
+    accent:"#22D3EE",
+    client:{
+      name:"MoretaPay", industry:"Payments · Stablecoin payouts", hq:"Emerging markets",
+      website:"moretapay.com", emailPattern:"first@moretapay.com", pattern:"Stablecoin prefunding & payouts",
+      description:"A payments company that is prefunded in stablecoins and turns that liquidity into local-currency disbursements. MoretaPay's partners top up in USDT/USDC; MoretaPay then pays out to end recipients and merchants locally, increasingly via QR.",
+      businessModel:"Receives stablecoin prefunding from partners and clients, then executes local-currency payouts (including QR) to merchants and consumers. The core need is reliable stablecoin-in, local-fiat-out conversion at good rates with instant settlement.",
+      keyInsight:"MoretaPay lives on the conversion leg: turning inbound stablecoins into spendable local fiat instantly, at competitive FX, with QR payout coverage where its users actually are."
+    },
+    play:{ headline:"Be the conversion + payout engine",
+      rationale:"Plug TransFi in behind MoretaPay's prefunding: receive USDT/USDC, convert to local fiat at competitive FX, and disburse via QR across 70+ countries with automated reconciliation. MoretaPay keeps the client relationship; TransFi guarantees the last-mile payout." },
+    flow:{
+      title:"Stablecoin prefunding → instant local QR payouts",
+      products:["redeem","payout","swap"],
+      summary:"TransFi receives MoretaPay's stablecoin prefunding, converts it to local fiat and executes instant QR payouts to merchants — with clean reconciliation back to MoretaPay.",
+      participants:[
+        {name:"MoretaPay", short:"MoretaPay", kind:"client"},
+        {name:"TransFi", short:"TransFi", kind:"tf"},
+        {name:"Local Merchant", short:"Merchant (QR)", kind:"end"},
+      ],
+      steps:[
+        {from:0,to:1,label:"Sends stablecoin prefunding (USDT/USDC)",instrument:"Stablecoin"},
+        {from:1,to:1,label:"Converts stablecoin → local fiat",instrument:"Fiat"},
+        {from:1,to:2,label:"Executes instant QR payout",instrument:"QR"},
+        {from:1,to:0,label:"Confirms payout & reconciliation",instrument:"Data"},
+      ]
+    },
+    contacts:[
+      {name:null, title:"Founder / CEO", confidence:"med", inferred:true, email:"first@moretapay.com", relevance:"Owns liquidity partnerships"},
+      {name:null, title:"Head of Payments / Treasury", confidence:"high", inferred:true, email:"first@moretapay.com", relevance:"Owns stablecoin conversion & FX"},
+      {name:null, title:"Head of Partnerships", confidence:"med", inferred:true, email:"partnerships@moretapay.com", relevance:"Owns provider integrations"},
+    ],
+    email:{ to:"partnerships@moretapay.com", subject:"Stablecoin in, local QR payouts out — on one rail",
+body:`Hi MoretaPay team,
+
+You are prefunded in stablecoins and need that liquidity to land as spendable local money, fast, wherever your users are. That last-mile conversion and payout is exactly what TransFi is built for.
+
+Proposed flow:
+  1. MoretaPay sends stablecoin prefunding (USDT/USDC) to TransFi.
+  2. TransFi converts it to local fiat at competitive FX.
+  3. We execute instant QR payouts to your merchants and recipients.
+  4. You get real-time confirmation and clean reconciliation back.
+
+With 250+ payment methods and QR coverage across 70+ countries — and existing settlement for exchanges, banks and remittance firms — TransFi becomes your conversion and payout engine while you keep the client relationship.
+
+Could we grab 20 minutes to map this to your top payout corridors? Happy to share the flow diagram and reference deployments.
+
+Best,
+`+TF.signoff }
+  },
+
+  web3games: {
+    match:(u)=> /best-web3-games|bitcoinfoundation/i.test(u),
+    multi:true,
+    companies:[
+      // sky mavis
+      {name:"Sky Mavis", industry:"Web3 gaming · Axie Infinity & Ronin", hq:"Ho Chi Minh City, Vietnam",
+       website:"skymavis.com", emailPattern:"first@skymavis.com", pattern:"Marketplace / platform collection", accent:"#22D3EE",
+       description:"Studio behind Axie Infinity and the Ronin network — one of the largest Web3 gaming ecosystems, selling NFTs and in-game assets to a global player base and paying out rewards worldwide.",
+       businessModel:"Sells NFTs, in-game assets and marketplace fees globally; distributes token rewards and creator payouts to players across dozens of countries.",
+       keyInsight:"Checkout conversion on asset sales and low-cost global player payouts are the two levers that move revenue.",
+       play:{headline:"NFT checkout in, player payouts out",rationale:"Embed TransFi E-commerce Checkout so players buy assets across 250+ local methods with USDT settled to the studio via Fiat→Stablecoin Conversion, then reuse the same rail for instant Cross-border Payouts to players in 45+ countries."},
+       flow:{title:"Asset checkout → USDT, player payouts out",summary:"TransFi collects player payments for NFTs and assets globally, settles USDT to Sky Mavis, and executes reward payouts on the same rail.",
+         participants:[{name:"Player",short:"Player",kind:"ext"},{name:"TransFi",short:"TransFi",kind:"tf"},{name:"Sky Mavis Treasury",short:"Sky Mavis",kind:"client"},{name:"Reward Recipient",short:"Recipient",kind:"end"}],
+         steps:[{from:0,to:1,label:"Pays for NFT / asset",instrument:"Fiat"},{from:1,to:1,label:"Convert to USDT",instrument:"USDT"},{from:1,to:2,label:"Settle USDT to studio",instrument:"USDT"},{from:2,to:1,label:"Fund reward payouts",instrument:"USDT"},{from:1,to:3,label:"Instant local payout",instrument:"Payout"}]},
+       contacts:[
+         {name:"Trung Nguyen",title:"CEO & Co-Founder, Sky Mavis",linkedin:"https://www.linkedin.com/in/trungfinity/",newsUrl:"https://www.forbes.com/profile/trung-nguyen/",profileUrl:"https://skymavis.com/about",email:null,emailInferred:true,confidence:"high",relevance:"Owns strategy & partnerships"},
+         {name:"Aleksander Larsen",title:"Co-Founder & COO",linkedin:"https://www.linkedin.com/in/psycheout86/",newsUrl:null,profileUrl:"https://skymavis.com/about",email:null,emailInferred:true,confidence:"high",relevance:"Ecosystem & BD"},
+         {name:null,title:"Head of Payments",linkedin:null,newsUrl:null,profileUrl:"https://careers.skymavis.com/",email:"payments@skymavis.com",emailInferred:true,confidence:"med",relevance:"Owns checkout & payouts"},
+         {name:null,title:"Head of Partnerships",linkedin:null,newsUrl:null,profileUrl:"https://careers.skymavis.com/",email:"bd@skymavis.com",emailInferred:true,confidence:"med",relevance:"Ecosystem integrations"},
+       ],
+       email:{to:"partnerships@skymavis.com",subject:"NFT checkout + player payouts on one TransFi rail",
+         body:`Hi Sky Mavis team,
+
+Congrats on the continued momentum with Axie and the Ronin ecosystem. Two things caught my eye that TransFi could help unlock at scale:
+  1. Players pay for NFTs / assets in their local currency (250+ methods, 70+ countries)
+  2. TransFi converts to USDT and settles to the studio treasury
+  3. The same rail funds instant Cross-border Payouts to players and creators
+
+We already settle for leading exchanges, banks and remittance firms — the Sky Mavis fit is a natural extension: one integration handles both pay-in on asset sales and pay-out on rewards, without you having to stand up local rails per country.
+
+Worth a 20-minute call? Happy to share a payment-flow diagram and reference deployments.
+
+`+TF.signoff}},
+
+      // the sandbox
+      {name:"The Sandbox", industry:"Web3 gaming · Virtual world & LAND", hq:"Hong Kong",
+       website:"sandbox.game", emailPattern:"first.last@sandbox.game", pattern:"Marketplace / platform collection", accent:"#FBBF24",
+       description:"A leading metaverse platform where users buy LAND, avatars and creator assets. Runs a large UGC marketplace with global buyers and thousands of creators earning revenue shares.",
+       businessModel:"Marketplace take-rate on LAND and asset sales plus brand partnerships; needs global buyer collection and reliable creator revenue-share payouts.",
+       keyInsight:"Every unsupported local payment method is a lost LAND sale; creator payouts must be cheap and predictable across 100+ countries.",
+       play:{headline:"One global checkout, clean creator payouts",rationale:"TransFi runs the marketplace checkout across 250+ methods (E-commerce Checkout + Fiat Collection), settles net proceeds in USDT via Fiat→Stablecoin Conversion, and handles creator revenue-share payouts through Cross-border Payouts — all on the same integration."},
+       flow:{title:"Marketplace checkout → USDT → creator payouts",summary:"TransFi collects buyer payments for LAND and assets, settles USDT to The Sandbox, and disburses creator revenue shares on the same rail.",
+         participants:[{name:"Buyer",short:"Buyer",kind:"ext"},{name:"TransFi",short:"TransFi",kind:"tf"},{name:"The Sandbox",short:"The Sandbox",kind:"client"},{name:"Creator",short:"Creator",kind:"end"}],
+         steps:[{from:0,to:1,label:"Buys LAND / asset (250+ methods)",instrument:"Fiat"},{from:1,to:1,label:"Convert & net to USDT",instrument:"USDT"},{from:1,to:2,label:"Settle to marketplace",instrument:"USDT"},{from:2,to:1,label:"Fund revenue-share pool",instrument:"USDT"},{from:1,to:3,label:"Payout to creator",instrument:"Payout"}]},
+       contacts:[
+         {name:"Arthur Madrid",title:"Co-Founder & CEO",linkedin:"https://www.linkedin.com/in/arthurmadrid/",newsUrl:null,profileUrl:"https://sandbox.game/en/about/team/",email:null,emailInferred:true,confidence:"high",relevance:"Owns strategy & partnerships"},
+         {name:"Sebastien Borget",title:"Co-Founder & COO",linkedin:"https://www.linkedin.com/in/borgetsebastien/",newsUrl:"https://twitter.com/borgetsebastien",profileUrl:"https://sandbox.game/en/about/team/",email:null,emailInferred:true,confidence:"high",relevance:"Ecosystem & partnerships"},
+         {name:null,title:"Head of Payments / Treasury",linkedin:null,newsUrl:null,profileUrl:"https://sandbox.game/en/careers/",email:"finance@sandbox.game",emailInferred:true,confidence:"med",relevance:"Owns settlement & payouts"},
+         {name:null,title:"Head of Business Development",linkedin:null,newsUrl:null,profileUrl:"https://sandbox.game/en/careers/",email:"bd@sandbox.game",emailInferred:true,confidence:"med",relevance:"Marketplace integrations"},
+       ],
+       email:{to:"partnerships@sandbox.game",subject:"Global checkout + creator payouts on one rail",
+         body:`Hi The Sandbox team,
+
+I've been following the LAND drops and the pace of creator activity on the marketplace. TransFi could tighten both sides of that flywheel with a single integration:
+  1. Buyers pay for LAND / assets in 250+ local methods across 70+ countries
+  2. TransFi converts and settles net proceeds in USDT to The Sandbox
+  3. The same rail funds creator revenue-share payouts in 45+ countries
+
+We already settle for leading exchanges, banks and remittance firms, so both the checkout coverage and payout reliability are enterprise-grade. Net effect on The Sandbox: fewer failed local checkouts on LAND sales and predictable creator revenue-share cycles — no per-country rails to maintain.
+
+Open to a 20-minute call to walk through the flow diagram and reference deployments?
+
+`+TF.signoff}},
+
+      // immutable
+      {name:"Immutable", industry:"Web3 gaming infrastructure · zkEVM", hq:"Sydney, Australia",
+       website:"immutable.com", emailPattern:"first.last@immutable.com", pattern:"Exchange on/off-ramp", accent:"#A78BFA",
+       description:"Builds the leading Web3 gaming chain and developer platform (Immutable zkEVM, Passport). Hundreds of games rely on Immutable for wallets, marketplaces and player onboarding.",
+       businessModel:"Platform fees from games building on its chain; success depends on how easily mainstream players can fund wallets and cash out winnings.",
+       keyInsight:"A white-label fiat on/off-ramp across its game portfolio removes the single biggest onboarding drop-off for partner studios.",
+       play:{headline:"Portfolio-wide fiat on/off-ramp",rationale:"Offer TransFi as the default Crypto On/Off-Ramp inside Immutable Passport: players fund wallets from local fiat in 70+ countries via Fiat Collection, and cash out through Stablecoin→Fiat Redemption — one deal covering every partner game."},
+       flow:{title:"Passport wallet on/off-ramp for partner games",summary:"TransFi becomes the default on/off-ramp inside Immutable Passport across the game portfolio.",
+         participants:[{name:"Player",short:"Player",kind:"ext"},{name:"TransFi",short:"TransFi",kind:"tf"},{name:"Immutable Passport",short:"Passport",kind:"client"},{name:"Partner Game",short:"Game",kind:"end"}],
+         steps:[{from:0,to:1,label:"Deposits local fiat",instrument:"Fiat"},{from:1,to:1,label:"Convert to USDC / USDT",instrument:"USDC"},{from:1,to:2,label:"Credit Passport wallet",instrument:"USDC"},{from:2,to:3,label:"Spend in partner game",instrument:"USDC"},{from:1,to:0,label:"Cash out to local fiat",instrument:"Fiat"}]},
+       contacts:[
+         {name:"James Ferguson",title:"Co-Founder & CEO",linkedin:"https://www.linkedin.com/in/james-ferguson-immutable/",newsUrl:null,profileUrl:"https://www.immutable.com/company",email:null,emailInferred:true,confidence:"high",relevance:"Owns strategy & partnerships"},
+         {name:"Robbie Ferguson",title:"Co-Founder & President",linkedin:"https://www.linkedin.com/in/robbie-ferguson/",newsUrl:"https://twitter.com/0xferg",profileUrl:"https://www.immutable.com/company",email:null,emailInferred:true,confidence:"high",relevance:"Ecosystem & BD"},
+         {name:null,title:"Head of Passport",linkedin:null,newsUrl:null,profileUrl:"https://www.immutable.com/products/passport",email:"passport@immutable.com",emailInferred:true,confidence:"med",relevance:"Owns wallet onboarding"},
+         {name:null,title:"Head of Partnerships",linkedin:null,newsUrl:null,profileUrl:"https://www.immutable.com/careers",email:"partnerships@immutable.com",emailInferred:true,confidence:"med",relevance:"Studio integrations"},
+       ],
+       email:{to:"partnerships@immutable.com",subject:"Default fiat on/off-ramp inside Immutable Passport",
+         body:`Hi Immutable team,
+
+Player wallet funding is still the biggest onboarding drop-off for most partner studios — and one that gets solved once, at the Passport layer. TransFi could power it end-to-end:
+  1. Player deposits local fiat (250+ methods, 70+ countries)
+  2. TransFi converts to USDC / USDT and credits the Passport wallet
+  3. Player spends in any partner game on Immutable zkEVM
+  4. Same rail handles cash-out to local fiat
+
+We already settle for leading exchanges, banks and remittance firms. Result for Immutable: one deal covers on/off-ramp for every partner game, with no per-title integrations and enterprise-grade FX and compliance behind the scenes.
+
+Worth a 20-minute call to share the diagram and reference partners?
+
+`+TF.signoff}},
+    ]
+  },
+};
+
+function matchExample(url){
+  for(const k in CURATED){ if(CURATED[k].match(url)) return CURATED[k]; }
+  return null;
+}
+
+/* ============================ OFFLINE GENERIC BUILDER ============================ */
+function titleCase(s){ return s.replace(/[-_]/g," ").replace(/\b\w/g,c=>c.toUpperCase()); }
+function guessName(host){
+  const label=(host||"company").split(".")[0]||"company";
+  return titleCase(label);
+}
+function pickPattern(u){
+  const s=u.toLowerCase();
+  if(/remit|payout|disburse|wallet|cash/.test(s)) return "payout";
+  if(/trade|fx|prop|fund|broker|invest|capital|market\b/.test(s)) return "prop";
+  if(/bank|stable|coin|euro|usd|mint|token|chain/.test(s)) return "issuer";
+  if(/shop|store|commerce|market|checkout|subscrib|game/.test(s)) return "marketplace";
+  return "exchange";
+}
+const LABEL_TO_KEY={
+  "Stablecoin issuer / bank":"issuer",
+  "Prop trading / funded accounts":"prop",
+  "Stablecoin prefunding & payouts":"payout",
+  "Cross-border remittance":"payout",
+  "Exchange on/off-ramp":"exchange",
+  "Marketplace / platform collection":"marketplace",
+};
+function makeTemplates(name){
+  return {
+    prop:{ play:{headline:"Global checkout in, USDT settled out",rationale:`Run ${name}'s checkout on TransFi Fiat Collection (250+ methods), convert to USDT and settle to treasury — with Cross-border Payouts for the outbound leg on the same rail.`},
+      flow:{ title:"Checkout fiat → USDT settlement", summary:`TransFi collects ${name}'s customer payments globally and settles USDT to the platform.`,
+        participants:[{name:"Customer",short:"Customer",kind:"ext"},{name:"TransFi",short:"TransFi",kind:"tf"},{name:name+" Treasury",short:name+" Treasury",kind:"client"}],
+        steps:[{from:0,to:1,label:"Pays at checkout (local methods)",instrument:"Fiat"},{from:1,to:1,label:"Convert to USDT",instrument:"USDT"},{from:1,to:2,label:"Settle USDT to platform",instrument:"USDT"}] } },
+    payout:{ play:{headline:"Be the conversion + payout engine",rationale:`Receive ${name}'s stablecoin prefunding via Redemption, convert to local fiat at competitive FX and disburse with Cross-border Payouts / QR across 45+ countries — with clean reconciliation back.`},
+      flow:{ title:"Stablecoin prefunding → local payouts", summary:`TransFi converts ${name}'s stablecoins to local fiat and executes instant payouts.`,
+        participants:[{name:name,short:name.slice(0,14),kind:"client"},{name:"TransFi",short:"TransFi",kind:"tf"},{name:"Local Recipient",short:"Recipient",kind:"end"}],
+        steps:[{from:0,to:1,label:"Sends stablecoin prefunding",instrument:"Stablecoin"},{from:1,to:1,label:"Convert to local fiat",instrument:"Fiat"},{from:1,to:2,label:"Instant local / QR payout",instrument:"QR"},{from:1,to:0,label:"Confirm & reconcile",instrument:"Data"}] } },
+    issuer:{ play:{headline:"Be the demand engine for the token",rationale:`TransFi's Fiat Collection + Settlement stack supplies global fiat-to-stablecoin volume so ${name}'s token gains real settlement demand, with Virtual Accounts for clean prefunding.`},
+      flow:{ title:"Fiat → stablecoin settlement", summary:`TransFi on-ramps global fiat into ${name}'s stablecoin and delivers it to recipients.`,
+        participants:[{name:"Payer",short:"Payer",kind:"ext"},{name:"TransFi",short:"TransFi",kind:"tf"},{name:"Recipient",short:"Recipient",kind:"client"}],
+        steps:[{from:0,to:1,label:"Sends fiat payment",instrument:"Fiat"},{from:1,to:1,label:"Convert & mint stablecoin",instrument:"Stablecoin"},{from:1,to:2,label:"Deliver stablecoin",instrument:"Stablecoin"}] } },
+    marketplace:{ play:{headline:"One global checkout, clean settlement",rationale:`TransFi's E-commerce Checkout becomes ${name}'s pay-in layer across 250+ methods, settling in fiat or USDT with Treasury on top.`},
+      flow:{ title:"Global checkout → settlement", summary:`TransFi collects buyer payments for ${name} and settles to the platform.`,
+        participants:[{name:"Buyer",short:"Buyer",kind:"ext"},{name:"TransFi",short:"TransFi",kind:"tf"},{name:name,short:name.slice(0,14),kind:"client"}],
+        steps:[{from:0,to:1,label:"Pays at checkout (250+ methods)",instrument:"Fiat"},{from:1,to:1,label:"Convert / net",instrument:"USDT"},{from:1,to:2,label:"Settle to platform",instrument:"USDT"}] } },
+    exchange:{ play:{headline:"Plug-in fiat on/off-ramp",rationale:`Give ${name}'s users TransFi's Crypto On/Off-Ramp with local fiat rails in 70+ countries, 250+ methods and stablecoin settlement behind the scenes.`},
+      flow:{ title:"Local fiat ↔ stablecoin on/off-ramp", summary:`TransFi powers on/off-ramp so ${name}'s users move between local fiat and stablecoins.`,
+        participants:[{name:"User",short:"User",kind:"ext"},{name:"TransFi",short:"TransFi",kind:"tf"},{name:name,short:name.slice(0,14),kind:"client"}],
+        steps:[{from:0,to:1,label:"Deposits local fiat",instrument:"Fiat"},{from:1,to:1,label:"Convert to stablecoin",instrument:"USDT"},{from:1,to:2,label:"Credit to platform",instrument:"USDT"}] } },
+  };
+}
+function templFor(client){
+  const key=LABEL_TO_KEY[client.pattern]||pickPattern((client.website||"")+(client.businessModel||""));
+  const t=makeTemplates(client.name||"the platform");
+  return t[key]||t.exchange;
+}
+function genericFlowFor(client){ return templFor(client).flow; }
+function genericPlayFor(client){ return templFor(client).play; }
+function genericContactsFor(client){
+  const host=hostOf(client.website||"company.com")||"company.com";
+  return [
+    {name:null,title:"Founder / CEO",confidence:"med",inferred:true,email:"first@"+host,relevance:"Owns strategy & partnerships"},
+    {name:null,title:"Head of Payments / Finance",confidence:"high",inferred:true,email:"first@"+host,relevance:"Owns settlement & treasury"},
+    {name:null,title:"Head of Partnerships",confidence:"med",inferred:true,email:"partnerships@"+host,relevance:"Integrates providers"},
+  ];
+}
+function genericEmailFor(client,flow){
+  const host=hostOf(client.website||"company.com")||"company.com";
+  const name=client.name||"team";
+  return { to:"partnerships@"+host, subject:`Partnership: powering ${name}'s payments with TransFi`,
+body:`Hi ${name} team,
+
+I looked at ${host} and see a clear fit with TransFi. In short, we would:
+${(flow.steps||[]).map((s,i)=>`  ${i+1}. ${s.label}`).join("\n")}
+
+TransFi offers 250+ payment methods across 70+ countries — spanning fiat collection, stablecoin settlement, redemption and cross-border payouts — and already settles for leading exchanges, banks and remittance companies. ${name} can expand coverage and cut settlement cost without building rails in-house.
+
+Worth a short call to tailor this to your markets? I can share a flow diagram and live reference deployments.
+
+Best,
+`+TF.signoff };
+}
+function buildGeneric(url){
+  const host=hostOf(url); const name=guessName(host); const patKey=pickPattern(url);
+  const patLabel=(Object.entries(LABEL_TO_KEY).find(([l,k])=>k===patKey)||["Exchange on/off-ramp"])[0];
+  const client={ name, industry:"Fintech · Payments", hq:"—", website:host, emailPattern:"first@"+host,
+    pattern:patLabel, accent:"#4C86FF",
+    description:`${name} operates in digital payments. Based on the site, TransFi has mapped the most likely money-movement need and drafted a tailored collaboration. Connect live web analysis for a fully verified profile.`,
+    businessModel:`${name} moves value between customers and partners across borders — a natural fit for TransFi's on/off-ramp, settlement and payout rails.`,
+    keyInsight:`Reduce friction and cost on ${name}'s core money movement while expanding country and method coverage.` };
+  const t=templFor(client);
+  return { mode:"offline", accent:"#4C86FF", client, play:t.play, flow:t.flow,
+    contacts:genericContactsFor(client), email:genericEmailFor(client,t.flow) };
+}
+
+/* ============================ API LAYER ============================ */
+const MODEL = "claude-sonnet-4-6";
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+const PRODUCTS_PROMPT = `TransFi product stack — always map the prospect to the RIGHT products, never a generic "on/off-ramp":
+- Fiat Collection (pay-in): 250+ local methods across 70+ countries — checkout fees, deposits, top-ups
+- E-commerce Checkout: embedded hosted checkout for online stores and platforms
+- Fiat→Stablecoin Conversion & Settlement: USDT / USDC / EUR / local currencies, instant finality — B2B settlement, treasury inflows
+- Stablecoin→Fiat Redemption: OTC, bank transfer, QR payouts — last-mile disbursement from stablecoin liquidity
+- Crypto On/Off-Ramp: native crypto deposit and withdrawal for user-facing apps and wallets
+- Crypto Swap: on-platform asset conversion
+- Institutional OTC: large block trades with deep liquidity
+- Virtual Accounts: named local IBAN / ACH collection accounts — prefunding and reconciliation
+- Cross-border Payouts: 45+ countries, instant settlement — payroll, trader / creator / merchant payouts
+- Treasury: custody and management of crypto and stablecoin holdings`;
+
+async function callClaude(prompt, {search=false, maxTokens=2000}={}){
+  const body={ model:MODEL, max_tokens:maxTokens, messages:[{role:"user",content:prompt}] };
+  if(search) body.tools=[{type:"web_search_20250305",name:"web_search"}];
+  const res=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)
+  });
+  if(!res.ok){ throw new Error("api "+res.status); }
+  const data=await res.json();
+  if(!data || !Array.isArray(data.content)) throw new Error("bad payload");
+  return data.content.filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
+}
+function extractJSON(text){
+  if(!text) throw new Error("empty");
+  let cand=text;
+  const fence=text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if(fence) cand=fence[1];
+  cand=cand.trim();
+  const open=cand.search(/[\[{]/);
+  if(open<0) throw new Error("no json");
+  const openCh=cand[open], closeCh=openCh==="{"?"}":"]";
+  let depth=0,end=-1;
+  for(let i=open;i<cand.length;i++){ const c=cand[i]; if(c===openCh)depth++; else if(c===closeCh){depth--; if(depth===0){end=i;break;}} }
+  if(end<0) throw new Error("unbalanced");
+  return JSON.parse(cand.slice(open,end+1));
+}
+function sanitizeFlow(j){
+  if(!j||!Array.isArray(j.participants)||!Array.isArray(j.steps)) throw new Error("bad flow");
+  j.participants=j.participants.slice(0,5);
+  j.participants.forEach(p=>{ if(!p.short) p.short=(p.name||"").slice(0,14); if(!p.kind) p.kind="ext"; });
+  const n=j.participants.length;
+  j.steps=j.steps.filter(s=>Number.isInteger(s.from)&&Number.isInteger(s.to)&&s.from>=0&&s.from<n&&s.to>=0&&s.to<n).slice(0,6);
+  if(!j.steps.length) throw new Error("bad steps");
+  j.steps.forEach(s=>{ if(!s.instrument) s.instrument="Fiat"; });
+  return j;
+}
+
+const CLIENT_SCHEMA=`{"name":str,"industry":str,"hq":str,"website":str,"emailPattern":str,"description":str(<=60 words),"businessModel":str(<=50 words),"keyInsight":str(<=40 words),"pattern":one of ["Stablecoin issuer / bank","Prop trading / funded accounts","Stablecoin prefunding & payouts","Cross-border remittance","Exchange on/off-ramp","Marketplace / platform collection"],"play":{"headline":str(<=8 words),"rationale":str(<=55 words, name the specific TransFi products used)}}`;
+
+/* live agent tasks (return normalized structures; throw on failure) */
+async function liveDiscover(url){
+  const prompt=`You are a B2B strategy-research agent for TransFi, a global payments company.
+${PRODUCTS_PROMPT}
+
+Given a URL, identify the PROSPECTIVE CLIENT COMPANY (or companies) TransFi should partner with. Research the page.
+
+CRITICAL disambiguation rules:
+1. NEVER pick the publisher. News/media domains (coindesk.com, odaily.news, cointelegraph.com, yahoo.com/finance, bloomberg.com, bitcoinfoundation.org, techcrunch.com, etc.) are the source, never the prospect.
+2. The prospect is the PRIMARY SUBJECT: the company in the headline and the majority of the article body. Companies mentioned only in passing — as a partner, tool, data source, competitor aside, or single sentence — are NOT prospects. (Example: an article about BM Wallet that briefly mentions Vantage → the prospect is BM Wallet only.)
+3. If the page is a ROUND-UP / LISTICLE / COMPARISON ("best X", "top N ...") covering several companies each with their own section, return EACH distinct company (max 4) and set "multi":true.
+4. If the URL is a company's own site, that company is the single prospect.
+
+For every company, map its business model to the most relevant TransFi products in the "play".
+
+Return ONLY JSON, no prose:
+{"publisher":str or null,"multi":bool,"companies":[${CLIENT_SCHEMA}]}
+URL: ${url}`;
+  const j=extractJSON(await callClaude(prompt,{search:true,maxTokens:2600}));
+  if(!Array.isArray(j.companies)||!j.companies.length||!j.companies[0].name) throw new Error("no companies");
+  j.companies=j.companies.slice(0,4);
+  return j;
+}
+async function liveFlow(client){
+  const prompt=`You design payment flows for TransFi.
+${PRODUCTS_PROMPT}
+
+Client: ${client.name} — ${client.businessModel} Key insight: ${client.keyInsight}
+Design the best collaboration flow between the downstream customer, the client, and TransFi. Pick the RIGHT TransFi products for this business model. 3-5 steps. Use from===to for a conversion / mint / swap step performed by TransFi.
+Return ONLY JSON, no prose:
+{"title":str(<=10 words),"summary":str(<=40 words),"participants":[{"name":str,"short":str(<=14 chars),"kind":one of ["ext","tf","client","bank","end"]}],"steps":[{"from":int,"to":int,"label":str(<=8 words),"instrument":one of ["Fiat","EUR","USDT","USDC","Stablecoin","EURXT","QR","Payout","Banking","Data"]}]}`;
+  return sanitizeFlow(extractJSON(await callClaude(prompt,{maxTokens:1200})));
+}
+async function liveContacts(client){
+  const prompt=`Find decision-makers at ${client.name} (${client.website}) most relevant to a cross-border payments / settlement partnership: C-level, Head of Payments/Treasury, Head of Partnerships/BD, Head of Digital Assets. Prefer real, currently listed executives.
+Do NOT fabricate specific personal emails — if unknown, set "email" to null or a corporate pattern with "emailInferred":true.
+IMPORTANT: when a verified email is NOT available, ALWAYS provide at least one alternative professional signal for that person: a public LinkedIn URL ("linkedin"), a press/news mention URL ("newsUrl"), or an executive/company profile page ("profileUrl"). Never leave a contact with no way to reach or verify them.
+Return ONLY a JSON array (max 4), no prose:
+[{"name":str or null,"title":str,"linkedin":str or null,"newsUrl":str or null,"profileUrl":str or null,"email":str or null,"emailInferred":bool,"confidence":"high"|"med","relevance":str(<=10 words)}]`;
+  const j=extractJSON(await callClaude(prompt,{search:true,maxTokens:1600}));
+  const arr=Array.isArray(j)?j:(j.contacts||[]);
+  if(!arr.length) throw new Error("no contacts");
+  return arr.slice(0,4);
+}
+async function liveEmail(client,flow){
+  const steps=flow.steps.map((s,i)=>`${i+1}. ${s.label}`).join("; ");
+  const prompt=`Write a cold outreach email from TransFi's partnerships team to ${client.name}.
+${PRODUCTS_PROMPT}
+Context — business: ${client.businessModel} Insight: ${client.keyInsight} Proposed flow (${flow.title}): ${steps}.
+Name the specific TransFi products that power this flow (e.g. Fiat Collection, Redemption, Cross-border Payouts, Virtual Accounts) — do not stay generic. Also cite: 250+ payment methods across 70+ countries; settles for leading exchanges, banks and remittance firms.
+Requirements: concise (<=180 words), persuasive, executive-ready, personalised, reference the numbered flow as a short list, end with a soft CTA for a 20-minute call, sign exactly as "${TF.signoff.split("\n")[0]}, Strategic Partnerships, TransFi".
+Return ONLY JSON, no prose: {"to":str(email),"subject":str(<=9 words),"body":str with \\n line breaks}`;
+  const j=extractJSON(await callClaude(prompt,{maxTokens:1500}));
+  if(!j.body) throw new Error("no email");
+  return j;
+}
+async function liveFlowFix(client,flow,instruction){
+  const prompt=`You are refining a TransFi payment-flow diagram based on user feedback.
+${PRODUCTS_PROMPT}
+Client: ${client.name} — ${client.businessModel||""}
+Current flow JSON:
+${JSON.stringify({title:flow.title,summary:flow.summary,participants:flow.participants,steps:flow.steps})}
+User's requested change: "${instruction}"
+Apply the change faithfully. Keep 3-6 steps, valid participant indices (0-based into "participants"), and use from===to for a conversion / mint / swap performed by TransFi. Keep everything the user did not ask to change.
+Return ONLY JSON in exactly this schema, no prose:
+{"title":str,"summary":str,"participants":[{"name":str,"short":str(<=14 chars),"kind":one of ["ext","tf","client","bank","end"]}],"steps":[{"from":int,"to":int,"label":str(<=8 words),"instrument":one of ["Fiat","EUR","USDT","USDC","Stablecoin","EURXT","QR","Payout","Banking","Data"]}]}`;
+  return sanitizeFlow(extractJSON(await callClaude(prompt,{maxTokens:1400})));
+}
+
+/* ============================ ORCHESTRATION ENGINE ============================ */
+const LOGS = {
+  client:["Fetching page content","Extracting named entities","Filtering publisher / news source","Detecting primary subject vs mentions","Matching business-model pattern"],
+  flow:["Reading business model","Selecting TransFi products","Mapping participants","Sequencing money movement","Composing flow diagram"],
+  contacts:["Querying professional networks","Ranking by partnership relevance","Deriving verified titles","Collecting profile & press signals"],
+  email:["Loading client context","Drafting the hook","Injecting products + flow","Polishing tone for executives"],
+};
+const MULTI_ACCENTS=["#4C86FF","#34D399","#22D3EE","#FBBF24"];
+
+async function runAgent(id, task, H, {logs, minMs=1600}={}){
+  H.setAgent(id,{status:"run"});
+  let i=0; const lines=logs||LOGS[id]||[];
+  const tick=setInterval(()=>{ if(i<lines.length){ H.log(id,lines[i]); i++; } }, 620);
+  const started=Date.now();
+  try{
+    const result=await task();
+    const wait=Math.max(0, minMs-(Date.now()-started));
+    await sleep(wait);
+    clearInterval(tick);
+    while(i<Math.min(lines.length,3)){ H.log(id,lines[i]); i++; }
+    H.setAgent(id,{status:"done",result});
+    return result;
+  }catch(e){ clearInterval(tick); H.setAgent(id,{status:"err"}); throw e; }
+}
+
+async function offlineRun(url,H,reason){
+  H.setMode("offline");
+  const g=buildGeneric(url);
+  const client=g.client;
+  H.setAgent("client",{status:"done",result:client});
+  if(reason) H.orchLog(reason);
+  H.setClient(client);
+  H.setOrch({status:"done"});
+  const [fRes,ctRes]=await Promise.all([
+    runAgent("flow",()=>sleep(1500).then(()=>g.flow),H,{}),
+    runAgent("contacts",()=>sleep(1400).then(()=>g.contacts),H,{}),
+  ]);
+  const eRes=await runAgent("email",()=>sleep(1300).then(()=>g.email),H,{});
+  H.finish({mode:"offline", client, flow:fRes, contacts:ctRes, email:eRes, play:g.play});
+}
+
+async function runOrchestration(url, H){
+  const host=hostOf(url);
+  H.setOrch({status:"run"});
+  H.orchLog("Fetching "+host);
+
+  const example=matchExample(url);
+  if(example){
+    // ---- CURATED MULTI (instant, round-up) ----
+    if(example.multi && Array.isArray(example.companies)){
+      H.setMode("curated");
+      await sleep(600); H.orchLog("Parsing entities");
+      await sleep(450); H.orchLog("Publisher filtered: bitcoinfoundation.org");
+      await sleep(400); H.orchLog(example.companies.length+" companies detected — building a strategy for each");
+      H.setAgent("client",{status:"done",result:{name:example.companies.length+" prospects found",pattern:"round-up article"}});
+      H.setOrch({status:"done"});
+      H.setMulti(example.companies);
+      for(let i=0;i<example.companies.length;i++){
+        const c=example.companies[i];
+        H.updateStrategy(i,{status:"run"});
+        await sleep(1150);
+        H.updateStrategy(i,{flow:c.flow,contacts:c.contacts,email:c.email,play:c.play,status:"done"});
+      }
+      H.finishMulti(example.companies.length);
+      return;
+    }
+    // ---- CURATED SINGLE (instant, no API) ----
+    H.setMode("curated");
+    await sleep(650); H.orchLog("Parsing entities");
+    await sleep(500);
+    if(/coindesk/i.test(url)) H.orchLog("Publisher filtered: coindesk.com");
+    const client={...example.client, accent:example.accent};
+    H.orchLog("Prospect resolved: "+client.name);
+    H.setClient(client);
+    await sleep(450); H.setOrch({status:"done"});
+    await runAgent("client",()=>sleep(900).then(()=>client),H,{});
+    const [fRes,ctRes]=await Promise.all([
+      runAgent("flow",()=>sleep(1600).then(()=>example.flow),H,{}),
+      runAgent("contacts",()=>sleep(1500).then(()=>example.contacts),H,{}),
+    ]);
+    const eRes=await runAgent("email",()=>sleep(1400).then(()=>example.email),H,{});
+    H.finish({mode:"curated", client, flow:fRes, contacts:ctRes, email:eRes, play:example.play});
+    return;
+  }
+
+  // ---- LIVE (API) with OFFLINE fallback ----
+  H.orchLog("Searching the web");
+  let disc;
+  try{
+    disc=await runAgent("client",()=>liveDiscover(url),H,{minMs:2200});
+  }catch(e){
+    await offlineRun(url,H,"Live analysis unavailable — using offline blueprint");
+    return;
+  }
+  const comps=(disc.companies||[]).slice(0,4);
+  if(!comps.length){ await offlineRun(url,H,"No prospect found — using offline blueprint"); return; }
+  H.setMode("live");
+  if(disc.publisher) H.orchLog("Publisher filtered: "+disc.publisher);
+
+  if(comps.length===1){
+    // ---- SINGLE LIVE ----
+    const client={...comps[0], accent:"#4C86FF"};
+    H.setAgent("client",{result:client});
+    H.setClient(client);
+    H.orchLog("Prospect resolved: "+client.name);
+    H.setOrch({status:"done"});
+    const results=await Promise.allSettled([
+      runAgent("flow",()=>liveFlow(client),H,{minMs:2000}),
+      runAgent("contacts",()=>liveContacts(client),H,{minMs:2000}),
+    ]);
+    const flow = results[0].status==="fulfilled" ? results[0].value : genericFlowFor(client);
+    if(results[0].status!=="fulfilled") H.setAgent("flow",{status:"done",result:flow});
+    const contacts = results[1].status==="fulfilled" ? results[1].value : genericContactsFor(client);
+    if(results[1].status!=="fulfilled") H.setAgent("contacts",{status:"done",result:contacts});
+    let email;
+    try{ email=await runAgent("email",()=>liveEmail(client,flow),H,{minMs:1800}); }
+    catch(e){ email=genericEmailFor(client,flow); H.setAgent("email",{status:"done",result:email}); }
+    H.finish({mode:"live", client, flow, contacts, email, play:client.play||genericPlayFor(client)});
+    return;
+  }
+
+  // ---- MULTI LIVE (round-up / listicle) ----
+  const list=comps.map((c,i)=>({...c, accent:MULTI_ACCENTS[i%MULTI_ACCENTS.length]}));
+  H.setAgent("client",{result:{name:list.length+" prospects found",pattern:"round-up article"}});
+  H.orchLog(list.length+" companies detected — building a strategy for each");
+  H.setOrch({status:"done"});
+  H.setMulti(list);
+  for(let i=0;i<list.length;i++){
+    const c=list[i];
+    H.updateStrategy(i,{status:"run"});
+    const rs=await Promise.allSettled([liveFlow(c),liveContacts(c)]);
+    const flow=rs[0].status==="fulfilled"?rs[0].value:genericFlowFor(c);
+    const contacts=rs[1].status==="fulfilled"?rs[1].value:genericContactsFor(c);
+    let email;
+    try{ email=await liveEmail(c,flow); }catch(e){ email=genericEmailFor(c,flow); }
+    H.updateStrategy(i,{flow,contacts,email,play:c.play||genericPlayFor(c),status:"done"});
+  }
+  H.finishMulti(list.length);
+}
+
+/* ============================ CANVAS CAMERA ============================ */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const WORLD_BBOX={minX:860,minY:250,maxX:2340,maxY:1360};
+
+function useCanvas(){
+  const [cam,setCam]=useState({x:0,y:0,scale:.7});
+  const canvasRef=useRef(null);
+  const st=useRef({panning:false,sx:0,sy:0,cx:0,cy:0,pointers:new Map(),pinchDist:0,pinchScale:1,pinchMid:{x:0,y:0}});
+
+  const fit=useCallback((animate=true)=>{
+    const el=canvasRef.current; if(!el) return;
+    const r=el.getBoundingClientRect(); const pad=r.width<680?40:70;
+    const bw=WORLD_BBOX.maxX-WORLD_BBOX.minX, bh=WORLD_BBOX.maxY-WORLD_BBOX.minY;
+    const scale=clamp(Math.min((r.width-pad*2)/bw,(r.height-pad*2)/bh),0.3,1.1);
+    const ccx=(WORLD_BBOX.minX+WORLD_BBOX.maxX)/2, ccy=(WORLD_BBOX.minY+WORLD_BBOX.maxY)/2;
+    setCam({x:r.width/2-scale*ccx, y:r.height/2-scale*ccy, scale, anim:animate});
+  },[]);
+
+  const zoomBy=useCallback((factor,center)=>{
+    setCam(c=>{
+      const el=canvasRef.current; const r=el?el.getBoundingClientRect():{width:0,height:0};
+      const cx=center?center.x:r.width/2, cy=center?center.y:r.height/2;
+      const ns=clamp(c.scale*factor,0.3,1.8);
+      const wx=(cx-c.x)/c.scale, wy=(cy-c.y)/c.scale;
+      return {x:cx-wx*ns, y:cy-wy*ns, scale:ns, anim:true};
+    });
+  },[]);
+
+  const onPointerDown=useCallback((e)=>{
+    if(e.target.closest(".node")||e.target.closest("button")) return;
+    const s=st.current; s.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    e.currentTarget.setPointerCapture(e.pointerId);
+    if(s.pointers.size===1){
+      s.panning=true; s.sx=e.clientX; s.sy=e.clientY;
+      setCam(c=>{ s.cx=c.x; s.cy=c.y; return c; });
+    } else if(s.pointers.size===2){
+      const pts=[...s.pointers.values()];
+      s.pinchDist=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y);
+      const rect=e.currentTarget.getBoundingClientRect();
+      s.pinchMid={x:(pts[0].x+pts[1].x)/2-rect.left,y:(pts[0].y+pts[1].y)/2-rect.top};
+      setCam(c=>{ s.pinchScale=c.scale; return c; });
+    }
+  },[]);
+  const onPointerMove=useCallback((e)=>{
+    const s=st.current; if(!s.pointers.has(e.pointerId)) return;
+    s.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(s.pointers.size===2){
+      const pts=[...s.pointers.values()];
+      const d=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y);
+      const ns=clamp(s.pinchScale*(d/(s.pinchDist||d)),0.3,1.8);
+      setCam(c=>{ const wx=(s.pinchMid.x-c.x)/c.scale, wy=(s.pinchMid.y-c.y)/c.scale;
+        return {x:s.pinchMid.x-wx*ns,y:s.pinchMid.y-wy*ns,scale:ns,anim:false}; });
+      return;
+    }
+    if(s.panning){ setCam(c=>({x:s.cx+(e.clientX-s.sx),y:s.cy+(e.clientY-s.sy),scale:c.scale,anim:false})); }
+  },[]);
+  const endPointer=useCallback((e)=>{
+    const s=st.current; s.pointers.delete(e.pointerId);
+    if(s.pointers.size<2){ s.pinchDist=0; }
+    if(s.pointers.size===0){ s.panning=false; }
+  },[]);
+  const onWheel=useCallback((e)=>{
+    e.preventDefault();
+    const rect=e.currentTarget.getBoundingClientRect();
+    const center={x:e.clientX-rect.left,y:e.clientY-rect.top};
+    zoomBy(e.deltaY<0?1.12:1/1.12,center);
+  },[zoomBy]);
+
+  return {cam,setCam,canvasRef,fit,zoomBy,onPointerDown,onPointerMove,endPointer,onWheel,panning:()=>st.current.panning};
+}
+
+/* ============================ SEQUENCE DIAGRAM ============================ */
+function SequenceDiagram({flow,compact=false}){
+  const parts=flow.participants||[]; const steps=flow.steps||[];
+  const n=parts.length||1, m=steps.length||1;
+  const leftPad=58, laneGap= n>=4?146:158, rightPad=76;
+  const laneX=i=>leftPad+i*laneGap;
+  const W=leftPad+(n-1)*laneGap+rightPad;
+  const headerCY=30, lifelineTop=52, rowStart=92, rowH=60;
+  const H=rowStart+m*rowH+6, lifelineBottom=H-16;
+  const hw=Math.min(laneGap-16,134);
+  const arrow=(tx,ty,dir)=>`${tx},${ty} ${tx-dir*9},${ty-5.5} ${tx-dir*9},${ty+5.5}`;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{maxWidth:W, minWidth:Math.min(W,compact?520:0)}} role="img" aria-label="Payment flow diagram">
+      <style>{`.sq{opacity:0;animation:logIn .45s ease forwards}`}</style>
+      {/* lifelines */}
+      {parts.map((p,i)=>(
+        <line key={"ll"+i} x1={laneX(i)} y1={lifelineTop} x2={laneX(i)} y2={lifelineBottom}
+          stroke={kindColor(p.kind)} strokeOpacity="0.28" strokeWidth="1.4" strokeDasharray="3 7"/>
+      ))}
+      {/* headers */}
+      {parts.map((p,i)=>{
+        const c=kindColor(p.kind);
+        return (<g key={"h"+i}>
+          <rect x={laneX(i)-hw/2} y={16} width={hw} height={28} rx="9"
+            fill={c} fillOpacity="0.14" stroke={c} strokeOpacity="0.55"/>
+          <text x={laneX(i)} y={headerCY+4} textAnchor="middle" fontFamily="var(--disp)" fontWeight="600"
+            fontSize="11.5" fill="#EAECEF">{p.short||p.name}</text>
+        </g>);
+      })}
+      {/* steps */}
+      {steps.map((s,i)=>{
+        const y=rowStart+i*rowH; const col=instColor(s.instrument);
+        const x1=laneX(s.from), x2=laneX(s.to); const self=s.from===s.to;
+        const dir=x2>=x1?1:-1;
+        const midX=self? x1+40 : (x1+x2)/2;
+        const pillW=Math.max(34,(s.instrument||"").length*6.6+14);
+        return (<g className="sq" style={{animationDelay:(0.15+i*0.14)+"s"}} key={"s"+i}>
+          {/* number */}
+          <rect x="12" y={y-10} width="22" height="20" rx="6" fill={col} fillOpacity="0.16" stroke={col} strokeOpacity="0.5"/>
+          <text x="23" y={y+4} textAnchor="middle" fontFamily="var(--mono)" fontSize="10.5" fill={col}>{i+1}</text>
+          {self? (<g>
+            <path d={`M ${x1} ${y-10} h 34 a8 8 0 0 1 8 8 v4 a8 8 0 0 1 -8 8 h -34`} fill="none" stroke={col} strokeWidth="2"/>
+            <polygon points={arrow(x1,y+10,-1)} fill={col}/>
+          </g>) : (<g>
+            <line x1={x1} y1={y} x2={x2-dir*2} y2={y} stroke={col} strokeWidth="2"/>
+            <polygon points={arrow(x2,y,dir)} fill={col}/>
+          </g>)}
+          {/* label */}
+          <text x={self? x1+54 : midX} y={y-12} textAnchor={self?"start":"middle"} fontSize="10.5" fill="#A7AEBB">{s.label}</text>
+          {/* instrument pill */}
+          <g transform={`translate(${(self? x1+54+ (s.label.length*5.4) : midX) - (self?0:pillW/2)}, ${y+ (self?-2:9)})`}>
+            <rect x="0" y="-8" width={pillW} height="16" rx="8" fill={col} fillOpacity="0.16" stroke={col} strokeOpacity="0.5"/>
+            <text x={pillW/2} y="3.5" textAnchor="middle" fontFamily="var(--mono)" fontSize="9" fill={col}>{s.instrument}</text>
+          </g>
+        </g>);
+      })}
+    </svg>
+  );
+}
+
+/* ============================ SHARED BITS ============================ */
+function StatusBadge({status}){
+  if(status==="queued") return <span className="status queued">queued</span>;
+  if(status==="run") return <span className="status run"><i className="sp"/>working</span>;
+  if(status==="done") return <span className="status done"><Icon n="check" s={11} sw={2.6}/>done</span>;
+  if(status==="err") return <span className="status err">retry</span>;
+  return null;
+}
+function LogList({lines,ac}){
+  const tail=lines.slice(-4);
+  return (<div className="log">
+    {tail.map((l,i)=>(
+      <div className="log-row" key={l+i} style={i===tail.length-1?{}:{opacity:.55}}>
+        <span className="lk">▸</span><span>{l}</span>
+      </div>
+    ))}
+  </div>);
+}
+function MiniStrip({flow}){
+  const parts=flow.participants||[];
+  return (<div className="strip">
+    {parts.map((p,i)=>(
+      <React.Fragment key={i}>
+        <span className={"chip"+(p.kind==="tf"?" tf":"")}>{p.short||p.name}</span>
+        {i<parts.length-1 && <span className="arw"><Icon n="chevR" s={13}/></span>}
+      </React.Fragment>
+    ))}
+  </div>);
+}
+
+/* ============================ NODE LAYOUT ============================ */
+const NODES={
+  orch:{cx:1600,cy:420,half:150},
+  client:{cx:1040,cy:735,half:130},
+  flow:{cx:1410,cy:805,half:130},
+  contacts:{cx:1790,cy:805,half:130},
+  email:{cx:2160,cy:735,half:130},
+  deliv:{cx:1600,cy:1180,half:150},
+};
+function bez(x1,y1,x2,y2){ const dy=(y2-y1)*0.5; return `M ${x1} ${y1} C ${x1} ${y1+dy} ${x2} ${y2-dy} ${x2} ${y2}`; }
+
+/* ============================ CONNECTORS ============================ */
+function Connectors({agentState,complete}){
+  const orchBottom={x:NODES.orch.cx,y:NODES.orch.cy+NODES.orch.half};
+  const delivTop={x:NODES.deliv.cx,y:NODES.deliv.cy-NODES.deliv.half};
+  const wire=(a)=>{ const st=agentState[a.id]?agentState[a.id].status:"queued";
+    const active=(st==="run"); const done=(st==="done");
+    return {out:{path:bez(orchBottom.x,orchBottom.y,NODES[a.id].cx,NODES[a.id].cy-NODES[a.id].half),
+                 col:a.ac, mode: active?"active":(done?"steady":"idle")},
+            in:{path:bez(NODES[a.id].cx,NODES[a.id].cy+NODES[a.id].half,delivTop.x,delivTop.y),
+                col:a.ac, mode: complete?"steady":(done?"active":"idle")}};
+  };
+  const wires=AGENTS.map(wire);
+  const styleFor=(m)=>({idle:{opacity:.16},active:{opacity:.95},steady:{opacity:.6}}[m]);
+  return (
+    <svg className="wires" width="1" height="1" overflow="visible">
+      <style>{`@keyframes flowDash{to{stroke-dashoffset:-28}} .wa{stroke-dasharray:5 9;animation:flowDash .9s linear infinite}`}</style>
+      {wires.flatMap((w,i)=>[
+        <g key={"o"+i} style={styleFor(w.out.mode)}>
+          <path d={w.out.path} fill="none" stroke={w.out.col} strokeOpacity="0.25" strokeWidth="7" strokeLinecap="round"/>
+          <path d={w.out.path} fill="none" stroke={w.out.col} strokeWidth="2" strokeLinecap="round" className={w.out.mode==="active"?"wa wire-anim":""}/>
+        </g>,
+        <g key={"i"+i} style={styleFor(w.in.mode)}>
+          <path d={w.in.path} fill="none" stroke={w.in.col} strokeOpacity="0.22" strokeWidth="7" strokeLinecap="round"/>
+          <path d={w.in.path} fill="none" stroke={w.in.col} strokeWidth="2" strokeLinecap="round" className={w.in.mode==="active"?"wa wire-anim":""}/>
+        </g>
+      ])}
+    </svg>
+  );
+}
+
+/* ============================ NODES ============================ */
+function NodeShell({pos,width,children,className=""}){
+  return <div className={"node "+className} style={{left:pos.cx,top:pos.cy,width}}>{children}</div>;
+}
+
+function AgentNode({agent,state,selected,onOpen}){
+  const {status,logs=[],result}=state;
+  return (
+    <NodeShell pos={NODES[agent.id]} width={300}>
+      <div className={"card"+(selected?" sel":"")} style={{"--ac":agent.ac}}>
+        <div className="topline"/>
+        <div className="card-h">
+          <div className="ag-ic"><Icon n={agent.icon}/></div>
+          <div className="ag-tt"><b>{agent.name}</b><span>{agent.role}</span></div>
+          <StatusBadge status={status}/>
+        </div>
+        <div className="card-b">
+          {status==="queued" && <div className="log-row muted" style={{opacity:.6}}><span className="lk" style={{color:"var(--tx-4)"}}>◦</span><span>Waiting for orchestrator…</span></div>}
+          {status==="run" && <LogList lines={logs} ac={agent.ac}/>}
+          {status==="done" && result && <AgentResult id={agent.id} result={result}/>}
+          {status==="done" && result && <button className="viewbtn" onClick={()=>onOpen(agent.id)}>Open output <Icon n="chevR" s={13}/></button>}
+        </div>
+      </div>
+    </NodeShell>
+  );
+}
+function AgentResult({id,result}){
+  if(id==="client") return (<div className="res">
+    <div className="rl">Prospect</div>
+    <div className="rv" style={{fontFamily:"var(--disp)",fontWeight:600,fontSize:15}}>{result.name}</div>
+    <div style={{marginTop:8}}><span className="tag"><Icon n="layers" s={12}/>{result.pattern||result.industry}</span></div>
+  </div>);
+  if(id==="flow") return (<div className="res">
+    <div className="rl">Payment flow · {(result.steps||[]).length} steps</div>
+    <MiniStrip flow={result}/>
+  </div>);
+  if(id==="contacts"){ const top=result[0]||{};
+    return (<div className="res">
+    <div className="rl">{result.length} decision-maker{result.length>1?"s":""}</div>
+    <div className="rv">{top.name||top.title}{top.name?<span style={{color:"var(--tx-3)"}}> · {top.title}</span>:null}</div>
+  </div>);}
+  if(id==="email") return (<div className="res">
+    <div className="rl">Cold email · ready</div>
+    <div className="rv" style={{fontWeight:600}}>{result.subject}</div>
+    <div style={{marginTop:8}}><span className="tag"><Icon n="check" s={12} sw={2.6}/>Executive-ready</span></div>
+  </div>);
+  return null;
+}
+
+function OrchestratorNode({status,logs,client,agentState}){
+  return (
+    <NodeShell pos={NODES.orch} width={330} className="orch">
+      <div className="halo"/>
+      <div className="card" style={{"--ac":"var(--brand-bright)"}}>
+        <div className="topline"/>
+        <div className="card-h">
+          <div className="ag-ic"><Icon n="brain"/></div>
+          <div className="ag-tt"><b>Orchestrator</b><span>{client?("Analyzing "+client.name):"Decomposing the task"}</span></div>
+          <StatusBadge status={status}/>
+        </div>
+        <div className="card-b">
+          {(!client) ? <LogList lines={logs} ac="var(--brand-bright)"/> : (
+            <div className="plan">
+              {AGENTS.map((a,i)=>{ const st=agentState[a.id]?agentState[a.id].status:"queued";
+                return (<div className={"plan-row"+(st==="queued"?" pending":"")} key={a.id}>
+                  <span className="n" style={{background:a.ac}}>{i+1}</span>
+                  <span style={{color: st==="done"?"var(--tx)":"var(--tx-2)"}}>{a.name}</span>
+                  <span className="st" style={st==="done"?{color:"var(--ok)"}:(st==="run"?{color:a.ac}:{})}>
+                    {st==="done"?"done":st==="run"?"running":"queued"}</span>
+                </div>);
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </NodeShell>
+  );
+}
+
+function DeliverableNode({complete,onOpen}){
+  return (
+    <NodeShell pos={NODES.deliv} width={340} className={"deliv"+(complete?"":" locked")}>
+      <div className="card" style={{"--ac":"var(--green)"}}>
+        <div className="topline"/>
+        <div className="card-h">
+          <div className="ag-ic"><Icon n="spark"/></div>
+          <div className="ag-tt"><b>Sales Strategy</b><span>Bespoke plan for this prospect</span></div>
+          {complete? <span className="status done"><Icon n="check" s={11} sw={2.6}/>ready</span>
+                   : <span className="status queued">assembling</span>}
+        </div>
+        <div className="card-b">
+          {complete ? (<>
+            <div className="res" style={{marginTop:4}}>
+              <div className="rl">Deliverable</div>
+              <div className="rv">Client dossier · payment flow · decision-makers · ready-to-send email — merged into one brief.</div>
+            </div>
+            <button className="big-cta" onClick={onOpen}><Icon n="spark" s={17}/>Open sales strategy</button>
+          </>) : (
+            <div className="log-row muted" style={{opacity:.7}}><span className="lk" style={{color:"var(--tx-4)"}}>◦</span><span>Merging outputs from all four agents…</span></div>
+          )}
+        </div>
+      </div>
+    </NodeShell>
+  );
+}
+
+/* ============================ DETAIL PANEL ============================ */
+const PANEL_META={
+  client:{icon:"dossier",title:"Client dossier",sub:"Verified prospect profile",ac:"var(--teal)"},
+  flow:{icon:"route",title:"Payment flow",sub:"Proposed TransFi collaboration",ac:"var(--green)"},
+  contacts:{icon:"users",title:"Decision-makers",sub:"Who to reach & how",ac:"var(--violet)"},
+  email:{icon:"mail",title:"Cold outreach email",sub:"Ready to send",ac:"var(--amber)"},
+  strategy:{icon:"spark",title:"Sales strategy",sub:"The full bespoke brief",ac:"var(--green)"},
+};
+const PAV=["#22D3EE","#A78BFA","#FBBF24","#34D399","#FB7185"];
+
+function Dossier({c}){
+  return (<>
+    <div className="field">
+      <div className="kv"><span className="k">Company</span><span className="v" style={{fontWeight:600}}>{c.name}</span></div>
+      <div className="kv"><span className="k">Industry</span><span className="v">{c.industry||"—"}</span></div>
+      <div className="kv"><span className="k">HQ</span><span className="v">{c.hq||"—"}</span></div>
+      <div className="kv"><span className="k">Website</span><span className="v"><a href={normUrl(c.website)} target="_blank" rel="noopener">{c.website} <Icon n="ext" s={11}/></a></span></div>
+      <div className="kv"><span className="k">Matched pattern</span><span className="v"><span className="tag" style={{"--ac":"var(--teal)"}}>{c.pattern||"—"}</span></span></div>
+    </div>
+    <div><h4 className="sec-t">Overview</h4><p className="dossier-desc">{c.description}</p></div>
+    <div><h4 className="sec-t">Business model</h4><p className="dossier-desc">{c.businessModel}</p></div>
+    <div><h4 className="sec-t">Why TransFi fits</h4><p className="dossier-desc" style={{color:"var(--tx)"}}>{c.keyInsight}</p></div>
+  </>);
+}
+
+function FixDiagram({onFix,notify}){
+  const [open,setOpen]=useState(false);
+  const [txt,setTxt]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [err,setErr]=useState(null);
+  const go=async()=>{
+    const t=txt.trim(); if(!t||busy) return;
+    setBusy(true); setErr(null);
+    try{ await onFix(t); setOpen(false); setTxt(""); notify("Diagram updated"); }
+    catch(e){ setErr("Couldn't refine the diagram — the AI service isn't reachable right now. Try again in a moment."); }
+    setBusy(false);
+  };
+  if(!open) return (
+    <button className="viewbtn" style={{marginTop:10,"--ac":"var(--brand-bright)"}} onClick={()=>setOpen(true)}>
+      <Icon n="wand" s={14}/>Fix diagram with AI
+    </button>);
+  return (
+    <div className="fixer">
+      <div style={{fontSize:12.5,fontWeight:600,marginBottom:8,display:"flex",alignItems:"center",gap:7}}>
+        <Icon n="wand" s={14}/>Describe what to change</div>
+      <textarea value={txt} onChange={e=>setTxt(e.target.value)} disabled={busy}
+        placeholder={"e.g. Add the supplier's bank as a 4th participant, or route the payout via QR instead of bank transfer…"}/>
+      <div className="fr">
+        <button className="btn-solid" style={{flex:"none",padding:"9px 14px",fontSize:12.5}} onClick={go} disabled={busy||!txt.trim()}>
+          {busy? <span className="status run" style={{padding:0,background:"none",color:"#fff"}}><i className="sp"/></span> : <Icon n="spark" s={13}/>}
+          {busy?"Regenerating…":"Regenerate"}
+        </button>
+        <button className="chipbtn" onClick={()=>{setOpen(false);setErr(null);}} disabled={busy}>Cancel</button>
+      </div>
+      {err && <div className="fix-err">{err}</div>}
+    </div>
+  );
+}
+
+function FlowView({flow,onFix,notify}){
+  return (<>
+    <div className="play" style={{background:"linear-gradient(180deg,rgba(52,211,153,.05),transparent)"}}>
+      <div className="pt" style={{fontSize:16}}>{flow.title}</div>
+      <p>{flow.summary}</p>
+    </div>
+    <div>
+      <h4 className="sec-t">Flow diagram</h4>
+      <div className="seqwrap"><SequenceDiagram flow={flow}/></div>
+      <div className="seq-note"><span style={{color:"var(--tx-4)"}}><Icon n="info" s={13}/></span>
+        <span>Read top-to-bottom. Numbered arrows show each money movement; the coloured pill marks the instrument (fiat, stablecoin, EURXT, QR…). A loop on the TransFi lane is an on-platform conversion or mint.</span></div>
+      <FixDiagram onFix={onFix} notify={notify}/>
+    </div>
+    <div className="field">
+      {(flow.participants||[]).map((p,i)=>(
+        <div className="kv" key={i}><span className="k" style={{display:"flex",alignItems:"center",gap:8}}>
+          <i style={{width:9,height:9,borderRadius:3,background:kindColor(p.kind),display:"inline-block"}}/>{p.short||p.name}</span>
+          <span className="v" style={{color:"var(--tx-2)"}}>{p.name}</span></div>
+      ))}
+    </div>
+  </>);
+}
+
+function ContactsView({contacts,client,notify}){
+  return (<>
+    <div className="caveat"><Icon n="info" s={14}/><span>Titles and priorities are AI-mapped to the highest-leverage roles. Where no verified email exists, use the LinkedIn / press / profile signals to reach or verify the person.</span></div>
+    {contacts.map((p,i)=>{
+      const col=PAV[i%PAV.length];
+      const ln=p.linkedin||linkedinSearch(p.name,client.name);
+      const email=p.email||null;
+      const fallbackPattern=client.emailPattern||("first.last@"+hostOf(client.website||""));
+      const inferred=email? (p.emailInferred!==false) : true;
+      return (<div className="person" key={i}>
+        <div className="pav" style={{background:col}}>{p.name? initials(p.name): <Icon n="users" s={18} />}</div>
+        <div className="pb">
+          <div className="nm">{p.name||p.title}
+            <span className={"conf "+(p.confidence==="high"?"high":"med")}>{p.confidence==="high"?"high fit":"likely"}</span></div>
+          {p.name && <div className="rl">{p.title}</div>}
+          <div className="rl" style={{color:"var(--tx-3)",marginTop:4}}>{p.relevance}</div>
+          {email
+            ? <div className="rl mono" style={{marginTop:6,fontSize:11.5,color:"var(--tx-2)"}}>{email}
+                {inferred && <span style={{color:"var(--tx-4)",fontFamily:"var(--sans)"}}> · inferred</span>}</div>
+            : <div className="rl" style={{marginTop:6,fontSize:11.5,color:"var(--amber)"}}>No verified email — likely pattern <span className="mono">{fallbackPattern}</span>; reach via the signals below.</div>}
+          <div className="p-actions">
+            <a className="chipbtn" href={ln} target="_blank" rel="noopener"><Icon n="linkedin" s={13} fill={true}/>LinkedIn</a>
+            {p.profileUrl && <a className="chipbtn" href={p.profileUrl} target="_blank" rel="noopener"><Icon n="dossier" s={13}/>Profile</a>}
+            {p.newsUrl && <a className="chipbtn" href={p.newsUrl} target="_blank" rel="noopener"><Icon n="news" s={13}/>Press</a>}
+            <button className="chipbtn" onClick={()=>{copyText(email||fallbackPattern);notify("Email copied");}}><Icon n="copy" s={13}/>Copy email</button>
+          </div>
+        </div>
+      </div>);
+    })}
+  </>);
+}
+
+function EmailView({email,notify}){
+  const full=`Subject: ${email.subject}\n\n${email.body}`;
+  const mailto=`mailto:${encodeURIComponent(email.to||"")}?subject=${encodeURIComponent(email.subject||"")}&body=${encodeURIComponent(email.body||"")}`;
+  return (<>
+    <div className="email">
+      <div className="email-h">
+        <div className="row"><span className="lb">To</span><span className="vl mono" style={{fontSize:12.5}}>{email.to}</span></div>
+        <div className="row"><span className="lb">Subject</span><span className="vl subj">{email.subject}</span></div>
+      </div>
+      <div className="email-body">{email.body}</div>
+    </div>
+    <div className="email-actions">
+      <button className="btn-solid" onClick={()=>{copyText(full);notify("Email copied to clipboard");}}><Icon n="copy" s={15}/>Copy email</button>
+      <a className="btn-outline" href={mailto}><Icon n="send" s={15}/>Open in mail</a>
+    </div>
+    <div className="caveat" style={{color:"var(--tx-3)",borderColor:"var(--line)",background:"rgba(255,255,255,.02)"}}>
+      <Icon n="info" s={14}/><span>Personalised and executive-ready. Confirm the recipient address, then send as-is.</span></div>
+  </>);
+}
+
+function StrategyView({a,notify,open}){
+  const brief=
+`SALES STRATEGY — ${a.client.name}
+Pattern: ${a.client.pattern}
+
+RECOMMENDED PLAY: ${a.play.headline}
+${a.play.rationale}
+
+PROPOSED FLOW — ${a.flow.title}
+${a.flow.steps.map((s,i)=>`${i+1}. ${a.flow.participants[s.from]?.short} -> ${a.flow.participants[s.to]?.short}: ${s.label} [${s.instrument}]`).join("\n")}
+
+DECISION-MAKERS
+${a.contacts.map(c=>`- ${c.name||c.title}${c.name?" ("+c.title+")":""} — ${c.email||c.linkedin||c.profileUrl||""}`).join("\n")}
+
+COLD EMAIL
+Subject: ${a.email.subject}
+
+${a.email.body}`;
+  return (<>
+    <div className="play">
+      <div className="pt"><Icon n="bolt" s={16}/> {a.play.headline}</div>
+      <p>{a.play.rationale}</p>
+    </div>
+    <div>
+      <h4 className="sec-t">TransFi value it unlocks</h4>
+      <div className="valgrid">
+        {TF.props.map((v,i)=>(<div className="valcard" key={i}><div className="num">{v.num}</div><div className="lb">{v.lb}</div></div>))}
+      </div>
+    </div>
+    <div>
+      <h4 className="sec-t">Proposed payment flow</h4>
+      <div className="seqwrap"><SequenceDiagram flow={a.flow}/></div>
+      <button className="viewbtn" style={{marginTop:10,"--ac":"var(--green)"}} onClick={()=>open("flow")}><Icon n="wand" s={13}/>Refine this diagram</button>
+    </div>
+    <div>
+      <h4 className="sec-t">Who to reach first</h4>
+      <div className="field">
+        {a.contacts.slice(0,4).map((c,i)=>(
+          <div className="kv" key={i}><span className="k" style={{width:"auto",color:"var(--tx)",fontWeight:500,flex:1}}>{c.name||c.title}</span>
+            <span className="v" style={{flex:"none",color:"var(--tx-3)",fontSize:12.5,textAlign:"right"}}>{c.name?c.title:(c.confidence==="high"?"high fit":"likely")}</span></div>
+        ))}
+      </div>
+    </div>
+    <div>
+      <h4 className="sec-t">Ready-to-send email</h4>
+      <div className="email">
+        <div className="email-h">
+          <div className="row"><span className="lb">Subject</span><span className="vl subj">{a.email.subject}</span></div>
+        </div>
+        <div className="email-body" style={{maxHeight:150,overflow:"hidden",maskImage:"linear-gradient(180deg,#000 60%,transparent)"}}>{a.email.body}</div>
+      </div>
+      <div className="email-actions" style={{marginTop:10}}>
+        <button className="btn-solid" onClick={()=>open("email")}><Icon n="mail" s={15}/>Open full email</button>
+        <button className="btn-outline" onClick={()=>{copyText(brief);notify("Full brief copied");}}><Icon n="copy" s={15}/>Copy brief</button>
+      </div>
+    </div>
+  </>);
+}
+
+function DetailPanel({view,a,onClose,notify,open,onFix}){
+  const meta=PANEL_META[view];
+  useEffect(()=>{ const h=e=>{ if(e.key==="Escape") onClose(); }; window.addEventListener("keydown",h); return ()=>window.removeEventListener("keydown",h); },[onClose]);
+  return (
+    <>
+      <div className="scrim" onClick={onClose}/>
+      <aside className="panel" style={{"--ac":meta.ac}} role="dialog" aria-label={meta.title}>
+        <div className="grip"/>
+        <div className="panel-h">
+          <div className="ic"><Icon n={meta.icon}/></div>
+          <div className="tt"><b>{meta.title}</b><span>{a.client&&a.client.name? a.client.name+" — "+meta.sub : meta.sub}</span></div>
+          <button className="xbtn" onClick={onClose} aria-label="Close"><Icon n="x" s={16}/></button>
+        </div>
+        <div className="panel-b">
+          {view==="client" && <Dossier c={a.client}/>}
+          {view==="flow" && <FlowView flow={a.flow} onFix={onFix} notify={notify}/>}
+          {view==="contacts" && <ContactsView contacts={a.contacts} client={a.client} notify={notify}/>}
+          {view==="email" && <EmailView email={a.email} notify={notify}/>}
+          {view==="strategy" && <StrategyView a={a} notify={notify} open={open}/>}
+        </div>
+      </aside>
+    </>
+  );
+}
+
+/* ============================ LANDING ============================ */
+const EXAMPLES=[
+  {name:"Crédit Agricole", desc:"Euro stablecoin · news article", tag:"CA", color:"#4C86FF",
+   url:"https://www.coindesk.com/business/2026/07/01/french-banking-giant-credit-agricole-rolls-out-euro-stablecoin-eurxt"},
+  {name:"QT Funded", desc:"Proprietary trading platform", tag:"QT", color:"#F59E0B",
+   url:"https://qtfunded.quanttekel.com/"},
+  {name:"MoretaPay", desc:"Stablecoin prefunding & payouts", tag:"MP", color:"#22D3EE",
+   url:"https://moretapay.com/"},
+  {name:"Best Web3 games", desc:"Round-up · 3 prospects", tag:"W3", color:"#A78BFA",
+   url:"https://bitcoinfoundation.org/news/nft/best-web3-games/"},
+];
+function BrandMark({size=30,radius=9}){
+  return (<span className="mk" style={{width:size,height:size,borderRadius:radius,color:"#fff"}}>
+    <Icon n="route" s={Math.round(size*0.58)} sw={2.1}/></span>);
+}
+function Landing({onRun,kbCount}){
+  const [v,setV]=useState("");
+  const go=()=>{ const u=normUrl(v); if(u) onRun(u); };
+  return (
+    <div className="landing">
+      <div className="aura aura-1"/><div className="aura aura-2"/><div className="aura aura-3"/>
+      <div className="dots" style={{opacity:.5}}/>
+      <div className="topnav">
+        <div className="brand"><BrandMark/><div className="wm"><b>Flux</b><span>by Michael Ngo · Agentic Strategy OS</span></div></div>
+        <div className="nav-r">
+          <div className="pill-ghost"><span className="dot"/>Agents online</div>
+          <div className="pill-ghost" style={{gap:9}}>Built for <img src={TF_WORDMARK} alt="TransFi" style={{height:13,opacity:.95}}/></div>
+        </div>
+      </div>
+      <div className="hero">
+        <div className="eyebrow"><Icon n="spark" s={13}/> URL in · deal out</div>
+        <h1 className="head">Paste a prospect's link.<br/>Get a <em>ready-to-send deal.</em></h1>
+        <p className="sub">Flux spins up a team of AI agents that identify the real buyer, design a bespoke TransFi payment flow, find the decision-makers and draft the outreach — live, on one infinite canvas. Drop a round-up covering several companies and each one gets its own strategy.</p>
+        <div className="search-wrap">
+          <div className="search">
+            <span className="glyph"><Icon n="search" s={19}/></span>
+            <input value={v} onChange={e=>setV(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")go();}}
+              placeholder="Paste a company or article URL…" aria-label="Prospect URL" autoFocus/>
+            <button className="go" onClick={go} disabled={!v.trim()}><span>Build strategy</span><Icon n="arrow" s={18}/></button>
+          </div>
+          <div className="hint">Try one of the reference prospects below, or drop in any company URL.</div>
+        </div>
+        <div className="examples">
+          {EXAMPLES.map((e,i)=>(
+            <button className="ex" key={i} onClick={()=>onRun(e.url)}>
+              <span className="ic" style={{background:e.color+"22",color:e.color,border:"1px solid "+e.color+"55"}}>{e.tag}</span>
+              <span><b>{e.name}</b><span>{e.desc}</span></span>
+            </button>
+          ))}
+        </div>
+        <div className="kb">
+          <div className="kb-h"><div className="t"><Icon n="db" s={15}/><b>Business-model memory</b> — Flux reuses what it learns across prospects</div>
+            <div className="kb-count">{kbCount} models learned</div></div>
+          <div className="kb-grid">
+            {KB_PATTERNS.map(p=>(<div className="kbpat" key={p.id}><i style={{background:p.color}}/>{p.label}</div>))}
+          </div>
+        </div>
+      </div>
+      <div className="foot">Flux by Michael Ngo — an agentic strategy OS for TransFi partnerships. Outputs are AI-generated; verify contacts before sending.</div>
+    </div>
+  );
+}
+
+/* ============================ WORKSPACE ============================ */
+const MODE_META={
+  curated:{label:"Curated demo",col:"var(--teal)"},
+  live:{label:"Live web analysis",col:"var(--green)"},
+  offline:{label:"Offline blueprint",col:"var(--amber)"},
+};
+function TopBrand(){
+  return (<div className="tb-brand"><BrandMark size={26} radius={8}/><b>Flux</b><span className="byline">by Michael Ngo</span></div>);
+}
+function Workspace({url,mode,orch,client,agentState,analysis,onOpen,onNew}){
+  const cv=useCanvas();
+  const doneCount=AGENTS.filter(a=>agentState[a.id]&&agentState[a.id].status==="done").length;
+  const complete=!!analysis;
+  useEffect(()=>{ const t=setTimeout(()=>cv.fit(false),60); const r=()=>cv.fit(false);
+    window.addEventListener("resize",r); return ()=>{clearTimeout(t);window.removeEventListener("resize",r);}; },[]);
+  useEffect(()=>{ const el=cv.canvasRef.current; if(!el) return;
+    const h=(e)=>cv.onWheel(e); el.addEventListener("wheel",h,{passive:false}); return ()=>el.removeEventListener("wheel",h); },[cv.onWheel]);
+  const mm=MODE_META[mode];
+  const cA=client||{name:"Resolving prospect…",pattern:"analyzing"};
+  return (
+    <div className="ws">
+      <div className="topbar">
+        <TopBrand/>
+        <div className="divv"/>
+        <div className="client-chip">
+          <span className="av" style={{background:(client&&client.accent)||"var(--brand)"}}>{client?initials(client.name):"…"}</span>
+          <span className="meta"><b>{cA.name}</b><span>{hostOf(url)} · {cA.pattern||cA.industry||""}</span></span>
+        </div>
+        <div className="progress-mini">
+          {mm && <div className="mode-pill"><span className="dot" style={{background:mm.col,boxShadow:"0 0 7px "+mm.col}}/><span>{mm.label}</span></div>}
+          <div className="pbar"><i style={{width:(complete?100:(doneCount/AGENTS.length*100))+"%"}}/></div>
+          <div className="pcount">{doneCount}/{AGENTS.length}</div>
+          {complete && <button className="tb-btn primary" onClick={()=>onOpen("strategy")}><Icon n="spark" s={15}/><span>Strategy</span></button>}
+          <button className="tb-btn" onClick={onNew}><Icon n="plus" s={15}/><span>New</span></button>
+        </div>
+      </div>
+      <div className={"canvas"+(cv.panning()?" grabbing":"")} ref={cv.canvasRef}
+        onPointerDown={cv.onPointerDown} onPointerMove={cv.onPointerMove} onPointerUp={cv.endPointer} onPointerCancel={cv.endPointer}>
+        <div className="aura-c"/>
+        <div className="world" style={{transform:`translate(${cv.cam.x}px,${cv.cam.y}px) scale(${cv.cam.scale})`, transition: cv.cam.anim?"transform .5s cubic-bezier(.2,.8,.2,1)":"none"}}>
+          <Connectors agentState={agentState} complete={complete}/>
+          <OrchestratorNode status={orch.status} logs={orch.logs} client={client} agentState={agentState}/>
+          {AGENTS.map(a=>(
+            <AgentNode key={a.id} agent={a} state={agentState[a.id]} selected={false} onOpen={onOpen}/>
+          ))}
+          <DeliverableNode complete={complete} onOpen={()=>onOpen("strategy")}/>
+        </div>
+        <div className="ctrls">
+          <div className="grp">
+            <button className="cbtn" onClick={()=>cv.zoomBy(1.18)} aria-label="Zoom in"><Icon n="plus" s={16}/></button>
+            <button className="cbtn" onClick={()=>cv.zoomBy(1/1.18)} aria-label="Zoom out"><Icon n="minus" s={16}/></button>
+            <div className="zlabel">{Math.round(cv.cam.scale*100)}%</div>
+          </div>
+          <div className="grp"><button className="cbtn" onClick={()=>cv.fit(true)} aria-label="Fit to screen"><Icon n="fit" s={16}/></button></div>
+        </div>
+        <div className="legend">
+          {[["ext","Payer"],["tf","TransFi"],["client","Client"],["end","Recipient"]].map(([k,l])=>(
+            <div className="li" key={k}><i style={{background:kindColor(k)}}/>{l}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================ MULTI WORKSPACE (table) ============================ */
+function CellStatus({s}){
+  if(s==="run") return <span className="mspin" aria-label="working"/>;
+  return <span className="mcell-mini" style={{color:"var(--tx-4)"}}>queued</span>;
+}
+function MultiWorkspace({url,strategies,onOpen,onNew}){
+  const n=strategies.length;
+  const done=strategies.filter(s=>s.status==="done").length;
+  return (
+    <div className="ws">
+      <div className="topbar">
+        <TopBrand/>
+        <div className="divv"/>
+        <div className="client-chip">
+          <span className="av" style={{background:"var(--brand)"}}>{n}</span>
+          <span className="meta"><b>{n} prospects</b><span>{hostOf(url)} · round-up article</span></span>
+        </div>
+        <div className="progress-mini">
+          <div className="mode-pill"><span className="dot" style={{background:"var(--green)",boxShadow:"0 0 7px var(--green)"}}/><span>Live web analysis</span></div>
+          <div className="pbar"><i style={{width:(done/n*100)+"%"}}/></div>
+          <div className="pcount">{done}/{n}</div>
+          <button className="tb-btn" onClick={onNew}><Icon n="plus" s={15}/><span>New</span></button>
+        </div>
+      </div>
+      <div className="mwrap">
+        <div className="dots" style={{opacity:.5}}/>
+        <div className="mhead">
+          <h2>Round-up detected — {n} prospects, {n} strategies</h2>
+          <p>Every company in the article gets its own payment flow, decision-makers and cold email. Click any cell to open the detail.</p>
+        </div>
+        <div className="mtable" role="table" aria-label="Strategies per company">
+          <div className="mrow hd" role="row">
+            <div className="mc">Company</div><div className="mc">Payment flow</div>
+            <div className="mc">Contacts</div><div className="mc">Cold email</div><div className="mc" aria-label="Strategy"></div>
+          </div>
+          {strategies.map((s,i)=>{
+            const c=s.client||{}; const ok=s.status==="done";
+            return (
+            <div className="mrow" role="row" key={i} style={{animation:"logIn .4s ease both",animationDelay:(i*0.07)+"s"}}>
+              <button className="mc" onClick={()=>onOpen("client",i)} title="Open dossier">
+                <span className="cav" style={{background:c.accent||"var(--brand)"}}>{initials(c.name)}</span>
+                <span className="ct"><b>{c.name}</b><span>{c.pattern||c.industry||""}</span></span>
+              </button>
+              <button className="mc" disabled={!ok} onClick={()=>onOpen("flow",i)} title="Open payment flow">
+                {ok? (<><span className="ct"><b style={{fontSize:12.5,fontWeight:500,color:"var(--tx)"}}>{s.flow.title}</b>
+                        <span>{s.flow.steps.length} steps · {(s.flow.participants||[]).length} parties</span></span>
+                      <span className="go2"><Icon n="chevR" s={14}/></span></>)
+                    : <CellStatus s={s.status}/>}
+              </button>
+              <button className="mc" disabled={!ok} onClick={()=>onOpen("contacts",i)} title="Open contacts">
+                {ok? (<><span className="ct"><b style={{fontSize:12.5,fontWeight:500,color:"var(--tx)"}}>{(s.contacts[0]&&(s.contacts[0].name||s.contacts[0].title))||"—"}</b>
+                        <span>{s.contacts.length} decision-maker{s.contacts.length>1?"s":""}</span></span>
+                      <span className="go2"><Icon n="chevR" s={14}/></span></>)
+                    : <CellStatus s={s.status}/>}
+              </button>
+              <button className="mc" disabled={!ok} onClick={()=>onOpen("email",i)} title="Open cold email">
+                {ok? (<><span className="ct"><b style={{fontSize:12.5,fontWeight:500,color:"var(--tx)"}}>{s.email.subject}</b>
+                        <span>ready to send</span></span>
+                      <span className="go2"><Icon n="chevR" s={14}/></span></>)
+                    : <CellStatus s={s.status}/>}
+              </button>
+              <button className="mc msend" disabled={!ok} onClick={()=>onOpen("strategy",i)} title="Open full strategy"
+                style={{justifyContent:"center",color: ok?"var(--green)":"var(--tx-4)"}}>
+                <Icon n="spark" s={17}/>
+              </button>
+            </div>);
+          })}
+        </div>
+        <div className="seq-note" style={{width:"min(1060px,100%)"}}><span style={{color:"var(--tx-4)"}}><Icon n="info" s={13}/></span>
+          <span>Single-company URLs open the full agent canvas instead. The table keeps multi-prospect round-ups scannable — every cell opens the same detail panels.</span></div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================ APP ROOT ============================ */
+const EMPTY_AGENTS=()=>Object.fromEntries(AGENTS.map(a=>[a.id,{status:"queued",logs:[],result:null}]));
+function App(){
+  const [view,setView]=useState("landing");
+  const [url,setUrl]=useState("");
+  const [mode,setMode]=useState(null);
+  const [orch,setOrch]=useState({status:"queued",logs:[]});
+  const [client,setClient]=useState(null);
+  const [agentState,setAgentState]=useState(EMPTY_AGENTS());
+  const [analysis,setAnalysis]=useState(null);
+  const [isMulti,setIsMulti]=useState(false);
+  const [strategies,setStrategies]=useState([]);
+  const [sel,setSel]=useState(null);          // {view, idx} | null
+  const [toast,setToast]=useState(null);
+  const [kbCount,setKbCount]=useState(KB_BASE_COUNT);
+  const runId=useRef(0);
+  const toastT=useRef(0);
+
+  const notify=useCallback((m)=>{ setToast(m); clearTimeout(toastT.current); toastT.current=setTimeout(()=>setToast(null),1900); },[]);
+  const updateStrategy=useCallback((i,p)=>setStrategies(s=>s.map((x,j)=>j===i?{...x,...p}:x)),[]);
+
+  const start=useCallback(async (u)=>{
+    const my=++runId.current; const live=()=>my===runId.current;
+    setUrl(u); setView("ws"); setSel(null); setAnalysis(null); setMode(null); setClient(null);
+    setIsMulti(false); setStrategies([]);
+    setOrch({status:"queued",logs:[]}); setAgentState(EMPTY_AGENTS());
+    const H={
+      setOrch:(p)=>{ if(live()) setOrch(o=>({...o,...p})); },
+      orchLog:(l)=>{ if(live()) setOrch(o=>({...o,logs:[...o.logs,l]})); },
+      setAgent:(id,p)=>{ if(live()) setAgentState(s=>({...s,[id]:{...s[id],...p}})); },
+      log:(id,l)=>{ if(live()) setAgentState(s=>({...s,[id]:{...s[id],logs:[...(s[id].logs||[]),l]}})); },
+      setClient:(c)=>{ if(live()) setClient(c); },
+      setMode:(m)=>{ if(live()) setMode(m); },
+      setMulti:(list)=>{ if(!live()) return;
+        setIsMulti(true);
+        setStrategies(list.map(c=>({client:c,flow:null,contacts:null,email:null,play:c.play||null,status:"queued"}))); },
+      updateStrategy:(i,p)=>{ if(live()) updateStrategy(i,p); },
+      finish:(res)=>{ if(live()){ setAnalysis(res); setStrategies([{...res,status:"done"}]); setKbCount(c=>c+1); notify("Sales strategy ready"); } },
+      finishMulti:(n)=>{ if(live()){ setKbCount(c=>c+n); notify("All "+n+" strategies ready"); } },
+    };
+    try{ await runOrchestration(u,H); }
+    catch(e){ if(live()) notify("Something went wrong — try another URL"); }
+  },[notify,updateStrategy]);
+
+  const newSearch=useCallback(()=>{ setView("landing"); setSel(null); },[]);
+
+  const getA=useCallback((idx)=>{
+    if(isMulti){
+      const s=strategies[idx]||{};
+      return { client:s.client||{name:"—"}, flow:s.flow||{participants:[],steps:[]},
+        contacts:s.contacts||[], email:s.email||{subject:"",body:"",to:""},
+        play:s.play||{headline:"",rationale:""} };
+    }
+    return {
+      client:(analysis&&analysis.client)||client||agentState.client.result||{name:"—"},
+      flow:(analysis&&analysis.flow)||agentState.flow.result||{participants:[],steps:[]},
+      contacts:(analysis&&analysis.contacts)||agentState.contacts.result||[],
+      email:(analysis&&analysis.email)||agentState.email.result||{subject:"",body:"",to:""},
+      play:(analysis&&analysis.play)||{headline:"",rationale:""},
+    };
+  },[isMulti,strategies,analysis,client,agentState]);
+
+  const fixFlow=useCallback(async (idx,instruction)=>{
+    const a=getA(idx);
+    const nf=await liveFlowFix(a.client,a.flow,instruction);   // throws if API unreachable
+    if(isMulti){ updateStrategy(idx,{flow:nf}); }
+    else{
+      setAnalysis(an=>an?{...an,flow:nf}:an);
+      setStrategies(s=>s.length?[{...s[0],flow:nf}]:s);
+      setAgentState(s=>({...s,flow:{...s.flow,result:nf}}));
+    }
+  },[getA,isMulti,updateStrategy]);
+
+  const openSingle=useCallback((v)=>setSel({view:v,idx:0}),[]);
+  const openMulti=useCallback((v,i)=>setSel({view:v,idx:i}),[]);
+
+  return (
+    <div className="app">
+      {view==="landing"
+        ? <Landing onRun={start} kbCount={kbCount}/>
+        : (isMulti
+            ? <MultiWorkspace url={url} strategies={strategies} onOpen={openMulti} onNew={newSearch}/>
+            : <Workspace url={url} mode={mode} orch={orch} client={client} agentState={agentState}
+                analysis={analysis} onOpen={openSingle} onNew={newSearch}/>)}
+      {sel && <DetailPanel view={sel.view} a={getA(sel.idx)} onClose={()=>setSel(null)} notify={notify}
+                open={(v)=>setSel(s=>({...s,view:v}))} onFix={(instr)=>fixFlow(sel.idx,instr)}/>}
+      {toast && <div className="toast"><span className="ok"><Icon n="check" s={16} sw={2.6}/></span>{toast}</div>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+setTimeout(()=>{ const s=document.getElementById("splash"); if(s){ s.classList.add("hide"); setTimeout(()=>s.remove(),600);} }, 350);
+
+
+</script>
+</body>
+</html>
