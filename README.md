@@ -1,4 +1,5 @@
 # Flux — an Agentic Operating System for TransFi partnerships
+https://mikengovn.github.io/flux/
 
 **Live demo →** _replace this with your GitHub Pages URL once published (see [Publish](#publish-on-github-pages-in-3-clicks) below)_
 
@@ -39,9 +40,8 @@ The AI decomposes the work into multiple specialized agents, each responsible fo
 | `https://www.coindesk.com/business/2026/07/01/french-banking-giant-credit-agricole-rolls-out-euro-stablecoin-eurxt` | Filters the publisher, resolves **Crédit Agricole** as the prospect, designs the EURXT fiat-to-stablecoin settlement flow. |
 | `https://qtfunded.quanttekel.com/` | Recognizes a **prop-trading platform**; proposes TransFi handles checkout fiat collection and settles USDT to the platform. |
 | `https://moretapay.com/` | Recognizes a **stablecoin prefunding & payouts** model; proposes TransFi receives stablecoins, converts to local fiat, and executes QR payouts. |
-| `https://bitcoinfoundation.org/news/nft/best-web3-games/` | Detects a **round-up article**; switches to the table view and generates a bespoke strategy for each of Sky Mavis, The Sandbox, and Immutable. |
 
-Or paste any company URL — the app runs a live Anthropic-powered web analysis and generates a bespoke strategy from scratch.
+Or paste any company URL — the app runs a live analysis and generates a bespoke strategy from scratch.
 
 ---
 
@@ -58,45 +58,8 @@ Or paste any company URL — the app runs a live Anthropic-powered web analysis 
 
 ---
 
-## Publish on GitHub Pages in 3 clicks
-
-The whole app is a single self-contained `index.html` file — no build step, no server. Ideal for GitHub Pages.
-
-1. **Create a public GitHub repo** (e.g. `flux`) and upload the contents of this folder (`index.html`, `README.md`, `LICENSE`).
-2. **Settings → Pages** → set _Source_ to **`main` branch / (root)** → **Save**.
-3. Wait ~30 seconds. Your live URL will be **`https://<your-username>.github.io/<repo-name>/`**. Share it.
-
-That's it. No secrets, no keys, nothing to configure.
-
-### Or with the command line
-
-```bash
-gh repo create flux --public --source . --push
-gh api -X POST repos/:owner/flux/pages -f 'source[branch]=main' -f 'source[path]=/'
-```
-
----
-
 ## Run locally
-
-No install required. Either:
-
-```bash
-# Option A: just open the file
-open index.html
-
-# Option B: serve on a local port (some browsers restrict fetches on file://)
-python3 -m http.server 8000
-# then visit http://localhost:8000
-```
-
----
-
-## How the AI calls work
-
-Flux sends prompts directly to Anthropic's `/v1/messages` endpoint (`claude-sonnet-4-6`) using the browser's `fetch`. No API key is embedded — the app is designed to run inside Anthropic-hosted environments (e.g. Claude.ai artifacts) that authenticate the request server-side, and to gracefully fall back to a curated / offline blueprint when the live API is unreachable. This keeps the demo shareable without exposing credentials.
-
-If you fork Flux to run it as an authenticated tool of your own, wire the API key at your proxy layer — never hard-code it into `index.html`.
+Double-click `index.html` — it opens in your browser and works offline.
 
 ---
 
