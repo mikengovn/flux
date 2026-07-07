@@ -1,7 +1,6 @@
 # Flux — an Agentic Operating System for TransFi partnerships
-https://mikengovn.github.io/flux/
 
-**Live demo →** _replace this with your GitHub Pages URL once published (see [Publish](#publish-on-github-pages-in-3-clicks) below)_
+**Live demo →** _https://mikengovn.github.io/flux/_
 
 ---
 
