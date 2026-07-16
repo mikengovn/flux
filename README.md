@@ -4,7 +4,7 @@
 
 ---
 
-I'm **Michael Ngo**, Head of Growth at [TransFi](https://transfi.com). I built an AI agent application that functions as an **Agentic Operating System**.
+This is an AI agent application that functions as an **Agentic Operating System** built by **Michael** @ [TransFi](https://transfi.com).
 
 The application features an infinite canvas where users can visualize how AI agents plan, decompose, and execute complex tasks in parallel.
 
